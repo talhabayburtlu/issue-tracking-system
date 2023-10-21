@@ -1,7 +1,7 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.issue.entity;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.its.issuetrackingservice.enums.AttachmentType;
+import com.its.issuetrackingservice.common.entity.AuditableEntity;
+import com.its.issuetrackingservice.issue.enums.AttachmentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

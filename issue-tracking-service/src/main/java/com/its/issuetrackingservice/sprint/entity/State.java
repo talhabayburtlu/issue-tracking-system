@@ -1,5 +1,6 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.sprint.entity;
 
+import com.its.issuetrackingservice.common.entity.AuditableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

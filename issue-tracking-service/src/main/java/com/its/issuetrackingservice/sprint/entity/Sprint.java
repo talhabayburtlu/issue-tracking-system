@@ -1,13 +1,14 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.sprint.entity;
 
+import com.its.issuetrackingservice.common.entity.AuditableEntity;
+import com.its.issuetrackingservice.issue.entity.Issue;
+import com.its.issuetrackingservice.user.entity.Organization;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
@@ -23,18 +24,18 @@ import lombok.ToString;
 import java.util.List;
 
 @Entity()
-@Table(name = "organization")
+@Table(name = "sprint")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class Organization extends AuditableEntity {
+public class Sprint extends AuditableEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "organization_sequence")
-	@SequenceGenerator(name = "organization_sequence", sequenceName = "organization_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sprint_sequence")
+	@SequenceGenerator(name = "sprint_sequence", sequenceName = "sprint_sequence", allocationSize = 1)
 	@Column(name = "id", precision = 18)
 	private Long id;
 
@@ -42,15 +43,21 @@ public class Organization extends AuditableEntity {
 	@Column(name = "name", length = 30, nullable = false)
 	private String name;
 
-	@ManyToOne
-	@JoinColumn(name = "parent_organization_id")
-	private Organization parentOrganization;
+	@Column(name = "period", nullable = false)
+	private Short period;
 
-	@ManyToMany
-	@JoinTable(
-			name = "organization_users",
-			joinColumns = @JoinColumn(name = "organization_id"),
-			inverseJoinColumns = @JoinColumn(name = "user_id")
-	)
-	private List<User> users;
+	@Column(name = "version", nullable = false)
+	private Short version;
+
+	@ManyToOne
+	@JoinColumn(name = "initial_state_id")
+	private State initialState;
+
+	@ManyToOne
+	@JoinColumn(name = "organization_id")
+	private Organization organization;
+
+	@OneToMany(mappedBy = "sprint")
+	private List<Issue> issues;
+
 }

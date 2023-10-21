@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.enums;
+package com.its.issuetrackingservice.issue.enums;
 
 public enum AttachmentType {
 	IMAGE,

@@ -1,5 +1,7 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.issue.entity;
 
+import com.its.issuetrackingservice.common.entity.AuditableEntity;
+import com.its.issuetrackingservice.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +12,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

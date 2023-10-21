@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

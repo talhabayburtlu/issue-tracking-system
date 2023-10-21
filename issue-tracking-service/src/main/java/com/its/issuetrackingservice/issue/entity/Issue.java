@@ -1,6 +1,9 @@
-package com.its.issuetrackingservice.entity;
+package com.its.issuetrackingservice.issue.entity;
 
-import com.its.issuetrackingservice.enums.IssueCategory;
+import com.its.issuetrackingservice.common.entity.AuditableEntity;
+import com.its.issuetrackingservice.sprint.entity.Sprint;
+import com.its.issuetrackingservice.issue.enums.IssueCategory;
+import com.its.issuetrackingservice.sprint.entity.State;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
