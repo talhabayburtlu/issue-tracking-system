@@ -1,6 +1,7 @@
 package com.its.issuetrackingservice.domain.user.service;
 
 import com.its.issuetrackingservice.domain.common.constants.I18nExceptionKeys;
+import com.its.issuetrackingservice.domain.common.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.common.exception.I18nException;
 import com.its.issuetrackingservice.persistence.user.entity.User;
 import com.its.issuetrackingservice.persistence.user.repository.UserRepository;
@@ -17,7 +18,7 @@ public class UserDomainService {
 	public User getUserByUsername(String username) {
 		User user = userRepository.getUserByUsername(username);
 		if (Objects.isNull(user)) {
-			throw new I18nException(I18nExceptionKeys.USER_NOT_FOUND, IllegalArgumentException.class);
+			throw new DataNotFoundException(I18nExceptionKeys.USER_NOT_FOUND);
 		}
 		return user;
 	}

@@ -1,7 +1,8 @@
 package com.its.issuetrackingservice.domain.issue.service;
 
 import com.its.issuetrackingservice.domain.common.constants.I18nExceptionKeys;
-import com.its.issuetrackingservice.domain.common.exception.I18nException;
+import com.its.issuetrackingservice.domain.common.exception.DataNotFoundException;
+import com.its.issuetrackingservice.domain.common.exception.WrongUsageException;
 import com.its.issuetrackingservice.domain.common.service.auth.GlobalAuthenticationService;
 import com.its.issuetrackingservice.domain.user.service.UserDomainService;
 import com.its.issuetrackingservice.persistence.common.entity.AuthenticatedUser;
@@ -41,7 +42,7 @@ public class IssueDomainService {
 	public Issue getIssueById(Long issueId) {
 		Optional<Issue> issue = issueRepository.findById(issueId);
 		if (issue.isEmpty()) {
-			throw new I18nException(I18nExceptionKeys.ISSUE_NOT_FOUND, IllegalArgumentException.class);
+			throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
 		}
 
 		return issue.get();
@@ -52,7 +53,7 @@ public class IssueDomainService {
 		User user = userDomainService.getUserByUsername(authenticatedUser.getUsername());
 
 		if (!Objects.equals(issue.getCreatorUser().getId(), user.getId())) {
-			throw new I18nException(I18nExceptionKeys.ISSUE_CREATOR_MUST_MATCH_AUTH_USER, IllegalArgumentException.class);
+			throw new WrongUsageException(I18nExceptionKeys.ISSUE_CREATOR_MUST_MATCH_AUTH_USER);
 		}
 	}
 }
