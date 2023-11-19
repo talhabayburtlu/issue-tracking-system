@@ -1,0 +1,35 @@
+server:
+  port: 9001
+  servlet:
+    context-path: /api/its
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/ITS
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        format_sql: false
+        show_sql: false
+  application:
+    name: issue-tracking-service
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+eureka:
+  client:
+    service-url:
+      defaultZone:  ${eureka_url:http://localhost:8080/eureka}
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+
+
+
+
