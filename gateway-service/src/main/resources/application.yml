@@ -9,6 +9,11 @@ spring:
       discovery:
         locator:
           enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/its-realm
 
 eureka:
   client:

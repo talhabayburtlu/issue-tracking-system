@@ -5,7 +5,6 @@ import com.its.issuetrackingservice.domain.common.exception.DataNotFoundExceptio
 import com.its.issuetrackingservice.domain.common.exception.WrongUsageException;
 import com.its.issuetrackingservice.domain.common.service.auth.GlobalAuthenticationService;
 import com.its.issuetrackingservice.domain.user.service.UserDomainService;
-import com.its.issuetrackingservice.persistence.common.entity.AuthenticatedUser;
 import com.its.issuetrackingservice.persistence.issue.entity.Issue;
 import com.its.issuetrackingservice.persistence.issue.repository.IssueRepository;
 import com.its.issuetrackingservice.persistence.user.entity.User;
@@ -18,42 +17,40 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class IssueDomainService {
-	private final GlobalAuthenticationService globalAuthenticationService;
-	private final UserDomainService userDomainService;
-	private final IssueRepository issueRepository;
+    private final GlobalAuthenticationService globalAuthenticationService;
+    private final UserDomainService userDomainService;
+    private final IssueRepository issueRepository;
 
-	public Issue createIssue(Issue issue) {
-		AuthenticatedUser authenticatedUser = globalAuthenticationService.getAuthenticatedUser();
-		User creatorUser = userDomainService.getUserByUsername(authenticatedUser.getUsername());
+    public Issue createIssue(Issue issue) {
+        User creatorUser = userDomainService.getUserByUsername(null);
 
-		issue.setCreatorUser(creatorUser);
+        issue.setCreatorUser(creatorUser);
 
-		return issueRepository.save(issue);
-	}
+        return issueRepository.save(issue);
+    }
 
-	public void deleteIssue(Long issueId) {
-		Issue issue = getIssueById(issueId);
+    public void deleteIssue(Long issueId) {
+        Issue issue = getIssueById(issueId);
 
-		validateAuthenticatedUserIsIssueCreator(issue);
+        validateAuthenticatedUserIsIssueCreator(issue);
 
-		issueRepository.delete(issue);
-	}
+        issueRepository.delete(issue);
+    }
 
-	public Issue getIssueById(Long issueId) {
-		Optional<Issue> issue = issueRepository.findById(issueId);
-		if (issue.isEmpty()) {
-			throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
-		}
+    public Issue getIssueById(Long issueId) {
+        Optional<Issue> issue = issueRepository.findById(issueId);
+        if (issue.isEmpty()) {
+            throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
+        }
 
-		return issue.get();
-	}
+        return issue.get();
+    }
 
-	public void validateAuthenticatedUserIsIssueCreator(Issue issue) {
-		AuthenticatedUser authenticatedUser = globalAuthenticationService.getAuthenticatedUser();
-		User user = userDomainService.getUserByUsername(authenticatedUser.getUsername());
+    public void validateAuthenticatedUserIsIssueCreator(Issue issue) {
+        User user = userDomainService.getUserByUsername(null);
 
-		if (!Objects.equals(issue.getCreatorUser().getId(), user.getId())) {
-			throw new WrongUsageException(I18nExceptionKeys.ISSUE_CREATOR_MUST_MATCH_AUTH_USER);
-		}
-	}
+        if (!Objects.equals(issue.getCreatorUser().getId(), user.getId())) {
+            throw new WrongUsageException(I18nExceptionKeys.ISSUE_CREATOR_MUST_MATCH_AUTH_USER);
+        }
+    }
 }
