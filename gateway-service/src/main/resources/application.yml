@@ -1,7 +1,13 @@
 server:
   port: 8081
+  servlet:
+    session:
+      cookie:
+        same-site: lax
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: api-gateway
   cloud:
