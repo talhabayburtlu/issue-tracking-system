@@ -23,6 +23,7 @@
         <module>discovery-service</module>
         <module>gateway-service</module>
         <module>issue-tracking-service</module>
+        <module>keycloak-integration-service</module>
     </modules>
 
 </project>

@@ -1,0 +1,63 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: ITS, keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./multiple-databases.sh:/docker-entrypoint-initdb.d/multiple-databases.sh
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kowl:
+    image: quay.io/cloudhut/kowl:latest
+    container_name: kowl
+    restart: always
+    ports:
+      - 8099:8080
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BROKERS=kafka:9092
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:19.0.3
+    command: ["start-dev", "--spi-events-listener-custom-event-listener" , "--http-port=8090"]
+    environment:
+      KC_LOG_LEVEL: info
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: postgres
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: test
+    volumes:
+      - ./keycloak-integration-service/target/keycloak-integration-service-0.0.1-SNAPSHOT.jar:/opt/keycloak/providers/custom-event-listener.jar
+    depends_on:
+      - postgres
+    ports:
+      - 8090:8090

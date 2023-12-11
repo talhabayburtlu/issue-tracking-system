@@ -33,13 +33,19 @@ public class User extends AuditableEntity {
 	private Long id;
 
 	@NotBlank
-	@Column(name = "username", length = 30, nullable = false, unique = true)
+	@Column(name = "username", nullable = false, unique = true, length = 32)
 	private String username;
 
-	@Column(name = "first_name", nullable = false)
+	@Column(name = "first_name", nullable = false, length = 32)
 	private String firstName;
 
-	@Column(name = "last_name", nullable = false)
+	@Column(name = "last_name", nullable = false, length = 32)
 	private String lastName;
+
+	@Column(name = "email", nullable = false, length = 320)
+	private String email;
+
+	@Column(name = "keycloakId", nullable = false, unique = true, length = 36)
+	private String keycloakId;
 
 }
