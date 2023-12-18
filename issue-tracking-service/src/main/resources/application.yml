@@ -13,11 +13,13 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          auto: none
+          auto: update
         format_sql: false
         show_sql: false
   application:
     name: issue-tracking-service
+  main:
+    allow-bean-definition-overriding: true
 
 eureka:
   client:

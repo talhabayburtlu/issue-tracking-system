@@ -2,24 +2,10 @@ package com.its.issuetrackingservice.persistence.sprint.entity;
 
 import com.its.issuetrackingservice.persistence.common.entity.AuditableEntity;
 import com.its.issuetrackingservice.persistence.issue.entity.Issue;
-import com.its.issuetrackingservice.persistence.user.entity.Organization;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
-import jakarta.persistence.Table;
+import com.its.issuetrackingservice.persistence.user.entity.Project;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -55,7 +41,7 @@ public class Sprint extends AuditableEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "organization_id")
-	private Organization organization;
+	private Project project;
 
 	@OneToMany(mappedBy = "sprint")
 	private List<Issue> issues;

@@ -1,39 +1,29 @@
 package com.its.issuetrackingservice.domain.common.service.auth;
 
+import com.its.issuetrackingservice.domain.common.dto.UserContext;
+import com.its.issuetrackingservice.domain.user.service.ProjectDomainService;
+import com.its.issuetrackingservice.domain.user.service.UserDomainService;
+import com.its.issuetrackingservice.persistence.user.entity.Project;
+import com.its.issuetrackingservice.persistence.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class GlobalAuthenticationService {
 
-	/*public AuthenticatedUser getAuthenticatedUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication == null) {
-			return null;
-		}
+    private final UserDomainService userDomainService;
+    private final ProjectDomainService projectDomainService;
 
-		if (! (authentication.getPrincipal() instanceof AuthenticatedUser)) {
-			return null;
-		}
+    public UserContext generateUserContext(String keycloakId) {
+        User user = userDomainService.getUserByKeycloakId(keycloakId);
+        Set<Project> projects = projectDomainService.getProjectsOfUser(user.getId());
 
-		AuthenticatedUser authenticatedUser = (AuthenticatedUser) authentication.getPrincipal();
-		return authenticatedUser;
-	}
-
-	public AuthenticatedUser createUserAuthentication(User user) {
-
-		AuthenticatedUser authenticatedUser = AuthenticatedUser.builder()
-				.username(user.getUsername())
-				.build();
-
-		Authentication authentication = new UsernamePasswordAuthenticationToken(
-				authenticatedUser,
-				null,
-				Collections.emptyList()
-		);
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		return authenticatedUser;
-	}*/
+        return UserContext.builder()
+                .user(user)
+                .projects(projects)
+                .build();
+    }
 }

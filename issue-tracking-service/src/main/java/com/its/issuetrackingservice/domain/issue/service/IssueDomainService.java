@@ -1,14 +1,15 @@
 package com.its.issuetrackingservice.domain.issue.service;
 
 import com.its.issuetrackingservice.domain.common.constants.I18nExceptionKeys;
+import com.its.issuetrackingservice.domain.common.dto.UserContext;
 import com.its.issuetrackingservice.domain.common.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.common.exception.WrongUsageException;
-import com.its.issuetrackingservice.domain.common.service.auth.GlobalAuthenticationService;
 import com.its.issuetrackingservice.domain.user.service.UserDomainService;
 import com.its.issuetrackingservice.persistence.issue.entity.Issue;
 import com.its.issuetrackingservice.persistence.issue.repository.IssueRepository;
 import com.its.issuetrackingservice.persistence.user.entity.User;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -16,13 +17,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class IssueDomainService {
-    private final GlobalAuthenticationService globalAuthenticationService;
+    private final UserContext userContext;
     private final UserDomainService userDomainService;
     private final IssueRepository issueRepository;
 
     public Issue createIssue(Issue issue) {
-        User creatorUser = userDomainService.getUserByUsername(null);
+        User creatorUser = userContext.getUser();
 
         issue.setCreatorUser(creatorUser);
 

@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.domain.common.model;
+package com.its.issuetrackingservice.api.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,7 @@
 package com.its.issuetrackingservice.api.common.config;
 
-import com.its.issuetrackingservice.domain.common.exception.DataNotFoundException;
+import com.its.issuetrackingservice.api.common.model.GenericRestResponse;
 import com.its.issuetrackingservice.domain.common.exception.I18nException;
-import com.its.issuetrackingservice.domain.common.model.GenericRestResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
