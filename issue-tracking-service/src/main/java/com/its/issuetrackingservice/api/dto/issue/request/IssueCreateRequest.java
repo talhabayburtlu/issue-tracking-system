@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.domain.dto.issue.request;
+package com.its.issuetrackingservice.api.dto.issue.request;
 
 import com.its.issuetrackingservice.api.dto.AuditableEntityDto;
 import lombok.Data;

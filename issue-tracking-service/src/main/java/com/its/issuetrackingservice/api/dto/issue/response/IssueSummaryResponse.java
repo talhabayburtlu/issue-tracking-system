@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.domain.dto.issue.response;
+package com.its.issuetrackingservice.api.dto.issue.response;
 
 import com.its.issuetrackingservice.api.dto.AuditableEntityDto;
 import lombok.Data;
@@ -8,16 +8,21 @@ import java.io.Serial;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class AttachmentResponse extends AuditableEntityDto {
+public class IssueSummaryResponse extends AuditableEntityDto {
 	@Serial
 	private static final long serialVersionUID = -3254824055423661547L;
 
 	@EqualsAndHashCode.Include
 	private Long id;
 
+	private String title;
 	private String description;
-	private String attachmentType;
-	private Long issueId;
-	private Long commentId;
+	private String category;
+	private Integer points;
+	private Long creatorUserId;
+	private Long verifierUserId;
+	private Long projectId;
+	private Long stateId;
+	private Long sprintId;
 
 }

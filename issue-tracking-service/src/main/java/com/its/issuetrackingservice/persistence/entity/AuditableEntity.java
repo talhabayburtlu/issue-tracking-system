@@ -1,6 +1,6 @@
 package com.its.issuetrackingservice.persistence.entity;
 
-import com.its.issuetrackingservice.domain.dto.UserContext;
+import com.its.issuetrackingservice.api.model.UserContext;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

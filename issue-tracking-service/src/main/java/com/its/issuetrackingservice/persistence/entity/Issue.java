@@ -27,7 +27,8 @@ public class Issue extends AuditableEntity {
 	@Column(name = "title", length = 30, nullable = false)
 	private String title;
 
-	@Column(name = "description", length = 512)
+	@Lob
+	@Column(name = "description", columnDefinition = "TEXT")
 	private String description;
 
 	@Column(name = "abbreviation", length = 10, nullable = false, unique = true)

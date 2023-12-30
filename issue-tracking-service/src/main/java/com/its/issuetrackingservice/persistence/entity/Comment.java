@@ -22,7 +22,8 @@ public class Comment extends AuditableEntity {
 	@Column(name = "id", precision = 18)
 	private Long id;
 
-	@Column(name = "content", length = 512, nullable = false)
+	@Lob
+	@Column(name = "content", nullable = false, columnDefinition = "TEXT")
 	private String content;
 
 	@ManyToOne

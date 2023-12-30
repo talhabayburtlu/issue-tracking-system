@@ -1,7 +1,7 @@
 package com.its.issuetrackingservice.domain.service;
 
+import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
-import com.its.issuetrackingservice.domain.dto.UserContext;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.exception.WrongUsageException;
 import com.its.issuetrackingservice.persistence.entity.*;
@@ -25,13 +25,13 @@ public class IssueDomainService {
     private final IssueRepository issueRepository;
 
     public Issue createIssue(Issue issue) {
-        Long projectId = issue.getProject().getId();
-        userContext.applyAccessToProject(projectId);
+        validateAccessToProjectOfIssue(issue);
 
         User creatorUser = userContext.getUser();
         issue.setAuditableFields(userContext);
         issue.setCreatorUser(creatorUser);
 
+        Long projectId = issue.getProject().getId();
         setInitialStateByProject(issue, projectId);
         generateAndSetIssueAbbreviationAndNumber(issue, projectId);
 
@@ -83,6 +83,10 @@ public class IssueDomainService {
         }
 
         return issue.get();
+    }
+
+    public void validateAccessToProjectOfIssue(Issue issue) {
+        userContext.applyAccessToProject(issue.getProject().getId());
     }
 
     private void generateAndSetIssueAbbreviationAndNumber(Issue issue, Long projectId) {

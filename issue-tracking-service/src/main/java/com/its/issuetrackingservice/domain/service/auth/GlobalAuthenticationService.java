@@ -1,6 +1,6 @@
 package com.its.issuetrackingservice.domain.service.auth;
 
-import com.its.issuetrackingservice.domain.dto.UserContext;
+import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.service.ProjectDomainService;
 import com.its.issuetrackingservice.domain.service.UserDomainService;
 import com.its.issuetrackingservice.persistence.entity.Project;

@@ -1,11 +1,11 @@
 package com.its.issuetrackingservice.api.controller;
 
+import com.its.issuetrackingservice.api.dto.issue.request.IssueCreateRequest;
+import com.its.issuetrackingservice.api.dto.issue.request.IssuePatchRequest;
+import com.its.issuetrackingservice.api.dto.issue.response.IssueDetailResponse;
+import com.its.issuetrackingservice.api.dto.issue.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.api.model.GenericRestResponse;
 import com.its.issuetrackingservice.api.service.IssueControllerService;
-import com.its.issuetrackingservice.domain.dto.issue.request.IssueCreateRequest;
-import com.its.issuetrackingservice.domain.dto.issue.request.IssuePatchRequest;
-import com.its.issuetrackingservice.domain.dto.issue.response.IssueDetailResponse;
-import com.its.issuetrackingservice.domain.dto.issue.response.IssueSummaryResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

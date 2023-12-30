@@ -1,10 +1,10 @@
 package com.its.issuetrackingservice.api.service;
 
+import com.its.issuetrackingservice.api.dto.issue.request.IssueCreateRequest;
+import com.its.issuetrackingservice.api.dto.issue.request.IssuePatchRequest;
+import com.its.issuetrackingservice.api.dto.issue.response.IssueDetailResponse;
+import com.its.issuetrackingservice.api.dto.issue.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.api.mapper.IssueMapper;
-import com.its.issuetrackingservice.domain.dto.issue.request.IssueCreateRequest;
-import com.its.issuetrackingservice.domain.dto.issue.request.IssuePatchRequest;
-import com.its.issuetrackingservice.domain.dto.issue.response.IssueDetailResponse;
-import com.its.issuetrackingservice.domain.dto.issue.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.domain.service.IssueDomainService;
 import com.its.issuetrackingservice.persistence.entity.Issue;
 import lombok.RequiredArgsConstructor;
@@ -41,8 +41,8 @@ public class IssueControllerService {
         Issue existingIssue = issueDomainService.getIssueById(issueId);
         Issue patchedIssue = issueMapper.patchEntityViaPatchEntityRequest(issueRequest, existingIssue);
 
-        existingIssue = issueDomainService.patchIssue(existingIssue, patchedIssue);
+        patchedIssue = issueDomainService.patchIssue(existingIssue, patchedIssue);
 
-        return issueMapper.toSummaryResponse(existingIssue);
+        return issueMapper.toSummaryResponse(patchedIssue);
     }
 }

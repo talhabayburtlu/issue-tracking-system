@@ -1,6 +1,7 @@
 package com.its.issuetrackingservice.api.config;
 
-import com.its.issuetrackingservice.domain.dto.UserContext;
+
+import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.service.auth.GlobalAuthenticationService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

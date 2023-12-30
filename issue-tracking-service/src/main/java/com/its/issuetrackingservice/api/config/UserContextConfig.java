@@ -1,7 +1,7 @@
 package com.its.issuetrackingservice.api.config;
 
 import com.google.common.collect.Lists;
-import com.its.issuetrackingservice.domain.dto.UserContext;
+import com.its.issuetrackingservice.api.model.UserContext;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

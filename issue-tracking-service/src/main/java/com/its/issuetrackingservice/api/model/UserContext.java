@@ -1,4 +1,4 @@
-package com.its.issuetrackingservice.domain.dto;
+package com.its.issuetrackingservice.api.model;
 
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.AccessException;

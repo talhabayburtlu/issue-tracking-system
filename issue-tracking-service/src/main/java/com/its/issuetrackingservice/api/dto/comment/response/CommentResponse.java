@@ -1,11 +1,11 @@
-package com.its.issuetrackingservice.domain.dto.issue.response;
+package com.its.issuetrackingservice.api.dto.comment.response;
 
 import com.its.issuetrackingservice.api.dto.AuditableEntityDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
-import java.util.Set;
+import java.time.OffsetDateTime;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
@@ -17,9 +17,7 @@ public class CommentResponse extends AuditableEntityDto {
 	private Long id;
 
 	private String content;
-	private String description;
 	private Long creatorUserId;
-	private Long issueId;
-	private Set<AttachmentResponse> attachments;
-
+	private OffsetDateTime createdDate;
+	private OffsetDateTime changedDate;
 }
