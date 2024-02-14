@@ -1,7 +1,7 @@
 package com.its.issuetrackingservice.api.service;
 
-import com.its.issuetrackingservice.api.dto.comment.request.CommentRequest;
-import com.its.issuetrackingservice.api.dto.comment.response.CommentResponse;
+import com.its.issuetrackingservice.api.dto.request.CommentRequest;
+import com.its.issuetrackingservice.api.dto.response.CommentResponse;
 import com.its.issuetrackingservice.api.mapper.CommentMapper;
 import com.its.issuetrackingservice.domain.service.CommentDomainService;
 import com.its.issuetrackingservice.persistence.entity.Comment;

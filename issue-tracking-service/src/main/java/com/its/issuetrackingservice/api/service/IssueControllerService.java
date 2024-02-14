@@ -1,9 +1,9 @@
 package com.its.issuetrackingservice.api.service;
 
-import com.its.issuetrackingservice.api.dto.issue.request.IssueCreateRequest;
-import com.its.issuetrackingservice.api.dto.issue.request.IssuePatchRequest;
-import com.its.issuetrackingservice.api.dto.issue.response.IssueDetailResponse;
-import com.its.issuetrackingservice.api.dto.issue.response.IssueSummaryResponse;
+import com.its.issuetrackingservice.api.dto.request.IssueCreateRequest;
+import com.its.issuetrackingservice.api.dto.request.IssuePatchRequest;
+import com.its.issuetrackingservice.api.dto.response.IssueDetailResponse;
+import com.its.issuetrackingservice.api.dto.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.api.mapper.IssueMapper;
 import com.its.issuetrackingservice.domain.service.IssueDomainService;
 import com.its.issuetrackingservice.persistence.entity.Issue;

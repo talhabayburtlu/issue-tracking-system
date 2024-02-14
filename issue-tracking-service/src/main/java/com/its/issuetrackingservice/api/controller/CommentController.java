@@ -1,7 +1,8 @@
 package com.its.issuetrackingservice.api.controller;
 
-import com.its.issuetrackingservice.api.dto.comment.request.CommentRequest;
-import com.its.issuetrackingservice.api.dto.comment.response.CommentResponse;
+
+import com.its.issuetrackingservice.api.dto.request.CommentRequest;
+import com.its.issuetrackingservice.api.dto.response.CommentResponse;
 import com.its.issuetrackingservice.api.model.GenericRestResponse;
 import com.its.issuetrackingservice.api.service.CommentControllerService;
 import lombok.AllArgsConstructor;

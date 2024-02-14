@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity()
@@ -65,7 +66,7 @@ public class Issue extends AuditableEntity {
 	private User verifierUser;
 
 	@OneToMany(mappedBy = "issue")
-	private Set<Attachment> attachments;
+	private List<Attachment> attachments;
 
 	@OneToMany(mappedBy = "issue")
 	private Set<Comment> comments;

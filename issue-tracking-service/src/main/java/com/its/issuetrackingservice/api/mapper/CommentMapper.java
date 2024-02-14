@@ -1,8 +1,8 @@
 package com.its.issuetrackingservice.api.mapper;
 
 import com.its.issuetrackingservice.api.config.MapStructConfig;
-import com.its.issuetrackingservice.api.dto.comment.request.CommentRequest;
-import com.its.issuetrackingservice.api.dto.comment.response.CommentResponse;
+import com.its.issuetrackingservice.api.dto.request.CommentRequest;
+import com.its.issuetrackingservice.api.dto.response.CommentResponse;
 import com.its.issuetrackingservice.persistence.entity.Comment;
 import org.mapstruct.*;
 

@@ -1,9 +1,9 @@
 package com.its.issuetrackingservice.api.controller;
 
-import com.its.issuetrackingservice.api.dto.issue.request.IssueCreateRequest;
-import com.its.issuetrackingservice.api.dto.issue.request.IssuePatchRequest;
-import com.its.issuetrackingservice.api.dto.issue.response.IssueDetailResponse;
-import com.its.issuetrackingservice.api.dto.issue.response.IssueSummaryResponse;
+import com.its.issuetrackingservice.api.dto.request.IssueCreateRequest;
+import com.its.issuetrackingservice.api.dto.request.IssuePatchRequest;
+import com.its.issuetrackingservice.api.dto.response.IssueDetailResponse;
+import com.its.issuetrackingservice.api.dto.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.api.model.GenericRestResponse;
 import com.its.issuetrackingservice.api.service.IssueControllerService;
 import lombok.AllArgsConstructor;
