@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
-
 @Entity()
 @Table(name = "comment")
 @Getter
@@ -34,7 +32,4 @@ public class Comment extends AuditableEntity {
 	@JoinColumn(name = "issue_id")
 	@JsonBackReference
 	private Issue issue;
-
-	@OneToMany(mappedBy = "comment")
-	private Set<Attachment> attachments;
 }

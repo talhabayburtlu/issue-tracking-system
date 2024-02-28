@@ -1,6 +1,5 @@
 package com.its.issuetrackingservice.api.config;
 
-import com.google.common.collect.Lists;
 import com.its.issuetrackingservice.api.model.UserContext;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +9,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import java.util.List;
 
 @Configuration
 public class UserContextConfig {
@@ -23,7 +24,7 @@ public class UserContextConfig {
     public FilterRegistrationBean<UserContextFilter> userContextFilterRegistration() {
         FilterRegistrationBean<UserContextFilter> result = new FilterRegistrationBean<>();
         result.setFilter(this.userContextFilter());
-        result.setUrlPatterns(Lists.newArrayList("/*"));
+        result.setUrlPatterns(List.of("/*"));
         result.setName("User Context Filter");
         result.setOrder(1);
         return result;

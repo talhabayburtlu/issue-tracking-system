@@ -23,8 +23,10 @@ spring:
 
 eureka:
   client:
+    register-with-eureka: false
+    fetch-registry: true
     service-url:
-      defaultZone:  ${eureka_url:http://localhost:8080/eureka}
+      defaultZone: ${eureka_url:http://localhost:8080/eureka}
   instance:
     hostname: localhost
     prefer-ip-address: true

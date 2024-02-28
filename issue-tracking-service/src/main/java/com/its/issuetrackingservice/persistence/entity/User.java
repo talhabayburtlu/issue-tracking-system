@@ -33,7 +33,7 @@ public class User extends AuditableEntity {
 	@Column(name = "email", nullable = false, length = 320)
 	private String email;
 
-	@Column(name = "keycloakId", nullable = false, unique = true, length = 36)
+	@Column(name = "keycloak_id", nullable = false, unique = true, length = 36)
 	private String keycloakId;
 
 }

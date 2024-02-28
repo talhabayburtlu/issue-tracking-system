@@ -23,14 +23,14 @@ public abstract class AttachmentMapper {
     public abstract AttachmentSummaryResponse toSummaryResponse(Attachment attachment);
 
     @Mapping(source = "issue.id", target = "issueId")
-    @Mapping(target = "content", qualifiedByName = "setAttachmentContent")
+    @Mapping(target = "content", source = "attachment",qualifiedByName = "setAttachmentContent")
     public abstract AttachmentResponse toResponse(Attachment attachment);
 
     @Mapping(source = "issue.id", target = "issueId")
-    @Mapping(target = "content", qualifiedByName = "setAttachmentContent")
+    @Mapping(target = "qualified", qualifiedByName = "setAttachmentContent")
     public abstract List<AttachmentResponse> toListResponse(List<Attachment> attachmentList);
 
-    @Named(value = "setAttachmentContent")
+    @Named("setAttachmentContent")
     public List<Byte> setAttachmentContent(Attachment attachment) {
         return attachmentDomainService.getAttachmentContent(attachment.getId());
     }
