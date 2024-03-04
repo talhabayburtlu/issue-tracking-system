@@ -1,15 +1,11 @@
 package com.its.issuetrackingservice.domain.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,13 +31,16 @@ public class BucketService {
         File tempFile = new File("." + File.separator + objectName);
         tempFile.deleteOnExit();
 
+        PutObjectRequest putObjectRequest;
         try {
-            multipartFile.transferTo(tempFile);
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(multipartFile.getSize());
+
+            putObjectRequest = new PutObjectRequest(bucketName, objectName, multipartFile.getInputStream(), objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead);
         } catch (IOException ioException) {
             throw new InternalServerException(I18nExceptionKeys.ATTACHMENT_UPLOAD_OPERATION_FAILED);
         }
 
-        var putObjectRequest = new PutObjectRequest(bucketName, objectName, tempFile).withCannedAcl(CannedAccessControlList.PublicRead);
         amazonS3Client.putObject(putObjectRequest);
 
         tempFile.delete();
@@ -50,9 +49,14 @@ public class BucketService {
     public List<Byte> downloadObject(String objectName) {
         S3Object s3object = amazonS3Client.getObject(bucketName, objectName);
         S3ObjectInputStream inputStream = s3object.getObjectContent();
+
         try {
-            FileUtils.copyInputStreamToFile(inputStream, new File("." + File.separator + objectName));
-            return Arrays.asList(ArrayUtils.toObject(inputStream.readAllBytes()));
+            Integer objectLength = Math.toIntExact(s3object.getObjectMetadata().getContentLength());
+
+            byte[] content = new byte[objectLength];
+            inputStream.read(content);
+
+            return Arrays.asList(ArrayUtils.toObject(content));
         } catch (IOException e) {
             throw new InternalServerException(I18nExceptionKeys.ATTACHMENT_DOWNLOAD_OPERATION_FAILED);
         }

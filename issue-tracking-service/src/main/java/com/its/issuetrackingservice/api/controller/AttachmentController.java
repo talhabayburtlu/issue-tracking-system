@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RestController
 @RequestMapping("/attachment")
 @AllArgsConstructor
@@ -20,15 +22,15 @@ public class AttachmentController {
 
     private final AttachmentControllerService attachmentControllerService;
 
-    @PostMapping("/issue/{issue_id}")
+    @PostMapping(path = "/issue/{issue_id}" ,consumes = {MULTIPART_FORM_DATA_VALUE})
     public GenericRestResponse<AttachmentSummaryResponse> uploadAttachment(@RequestParam("file") MultipartFile file,
                                                                            @PathVariable("issue_id") Long issueId) {
         return GenericRestResponse.of(attachmentControllerService.uploadAttachment(issueId, file));
     }
 
-    @GetMapping("/issue/{issue_id}")
+    @GetMapping(path = "/issue/{issue_id}")
     public GenericRestResponse<List<AttachmentResponse>> getIssueAttachments(@PathVariable("issue_id") Long issueId) {
-        return GenericRestResponse.of(attachmentControllerService.getTaskAttachments(issueId));
+        return GenericRestResponse.of(attachmentControllerService.getIssueAttachments(issueId));
     }
 
 }

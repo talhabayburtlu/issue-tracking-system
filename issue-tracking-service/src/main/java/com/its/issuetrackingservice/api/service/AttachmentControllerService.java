@@ -28,7 +28,7 @@ public class AttachmentControllerService {
     }
 
     @Transactional
-    public List<AttachmentResponse> getTaskAttachments(Long issueId) {
+    public List<AttachmentResponse> getIssueAttachments(Long issueId) {
         List<Attachment> attachment = attachmentDomainService.getAttachmentsOfIssue(issueId);
         return attachmentMapper.toListResponse(attachment);
     }

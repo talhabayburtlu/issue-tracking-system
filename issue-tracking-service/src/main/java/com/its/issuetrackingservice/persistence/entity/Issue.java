@@ -29,7 +29,7 @@ public class Issue extends AuditableEntity {
 	private String title;
 
 	@Lob
-	@Column(name = "description", columnDefinition = "TEXT")
+	@Column(name = "description")
 	private String description;
 
 	@Column(name = "abbreviation", length = 10, nullable = false, unique = true)

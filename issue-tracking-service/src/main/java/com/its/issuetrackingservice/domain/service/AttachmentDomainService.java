@@ -1,5 +1,6 @@
 package com.its.issuetrackingservice.domain.service;
 
+import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.exception.WrongUsageException;
@@ -25,7 +26,8 @@ public class AttachmentDomainService {
     private final BucketService bucketService;
     private final NameGeneratorService nameGeneratorService;
     private final AttachmentRepository attachmentRepository;
-    private final Long MAX_ATTACHMENT_SIZE_IN_BYTES = 10024L;
+    private final UserContext userContext;
+    private final Long MAX_ATTACHMENT_SIZE_IN_BYTES = 10024000L;
     private final Long MAX_ATTACHMENT_COUNT = 5L;
     private final List<MimeType> ALLOWED_ATTACHMENT_CONTENT_TYPES = List.of(MimeTypeUtils.IMAGE_JPEG, MimeTypeUtils.IMAGE_PNG, MimeTypeUtils.IMAGE_GIF);
 
@@ -39,6 +41,8 @@ public class AttachmentDomainService {
                 .issue(issue)
                 .attachmentType(file.getContentType())
                 .build();
+
+        attachment.setAuditableFields(userContext);
 
         attachment = attachmentRepository.save(attachment);
 
