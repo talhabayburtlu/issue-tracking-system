@@ -3,16 +3,15 @@ package com.its.keycloakintegrationservice.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.events.Event;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.events.admin.ResourceType;
-import org.springframework.boot.json.JsonParseException;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class KeycloakUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
     public static boolean isUserRelatedEvent(Object event) {
@@ -37,11 +36,14 @@ public class KeycloakUtil {
             return new HashMap<>();
         }
 
+        Map<String, Object> representationMap = new HashMap<>();
         try {
-            Map<String, Object> representationMap = mapper.readValue(adminEvent.getRepresentation(), new TypeReference<>() {});
+            representationMap = mapper.readValue(adminEvent.getRepresentation(), new TypeReference<>() {
+            });
             return representationMap;
         } catch (JsonProcessingException e) {
-            throw new JsonParseException(e);
+            log.info(e.getMessage());
         }
+        return representationMap;
     }
 }

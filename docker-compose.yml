@@ -45,8 +45,8 @@ services:
       - KAFKA_BROKERS=kafka:9092
 
   keycloak:
-    image: quay.io/keycloak/keycloak:19.0.3
-    command: ["start-dev", "--spi-events-listener-custom-event-listener" , "--http-port=8090"]
+    image: quay.io/keycloak/keycloak:24.0.1
+    command: ["start-dev", "--http-port=8090"]
     environment:
       KC_LOG_LEVEL: info
       KC_DB: postgres
@@ -55,9 +55,12 @@ services:
       KC_DB_PASSWORD: postgres
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: test
+      DEBUG: true
+      DEBUG_PORT: "*:8787"
     volumes:
       - ./keycloak-integration-service/target/keycloak-integration-service-0.0.1-SNAPSHOT.jar:/opt/keycloak/providers/custom-event-listener.jar
     depends_on:
       - postgres
     ports:
       - 8090:8090
+      - 8787:8787
