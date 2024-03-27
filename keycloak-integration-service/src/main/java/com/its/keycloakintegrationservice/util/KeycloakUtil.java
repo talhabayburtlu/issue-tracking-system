@@ -3,8 +3,8 @@ package com.its.keycloakintegrationservice.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.its.keycloakintegrationservice.constant.KafkaConstants;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.events.Event;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.events.admin.ResourceType;
 
@@ -15,12 +15,7 @@ import java.util.Map;
 public class KeycloakUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
     public static boolean isUserRelatedEvent(Object event) {
-        if (event instanceof Event userEvent) {
-            return switch (userEvent.getType()) {
-                case REGISTER, UPDATE_PROFILE, UPDATE_EMAIL, DELETE_ACCOUNT -> true;
-                default -> false;
-            };
-        } else if (event instanceof AdminEvent adminEvent) {
+        if (event instanceof AdminEvent adminEvent) {
             if (adminEvent.getResourceType().equals(ResourceType.USER)) {
                 return switch (adminEvent.getOperationType()) {
                     case CREATE, UPDATE, DELETE -> true;
@@ -45,5 +40,9 @@ public class KeycloakUtil {
             log.info(e.getMessage());
         }
         return representationMap;
+    }
+
+    public static String getTopicNameByRealmName(String realmName) {
+        return String.format("%s_%s" , KafkaConstants.Topics.KEYCLOAK_USER_EVENT_TOPIC_PREFIX, realmName);
     }
 }

@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ITS
+    url: jdbc:postgresql://localhost:5432/its
     username: postgres
     password: postgres
   jpa:
@@ -16,10 +16,15 @@ spring:
           auto: update
         format_sql: false
         show_sql: false
+    database: postgresql
   application:
     name: issue-tracking-service
   main:
     allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: localhost:29092
+
+
 
 eureka:
   client:

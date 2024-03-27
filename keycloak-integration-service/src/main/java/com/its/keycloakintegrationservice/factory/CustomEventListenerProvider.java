@@ -1,41 +1,57 @@
 package com.its.keycloakintegrationservice.factory;
 
+import com.its.keycloakintegrationservice.config.kafka.KafkaProducerConfig;
+import com.its.keycloakintegrationservice.model.UserEvent;
 import com.its.keycloakintegrationservice.util.KeycloakUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.keycloak.events.Event;
 import org.keycloak.events.EventListenerProvider;
 import org.keycloak.events.admin.AdminEvent;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.RealmProvider;
-import org.keycloak.models.UserModel;
-@Slf4j
-public class CustomEventListenerProvider implements EventListenerProvider {
 
+@Slf4j
+@RequiredArgsConstructor
+public class CustomEventListenerProvider implements EventListenerProvider {
     private final KeycloakSession session;
     private final RealmProvider model;
+    private KafkaProducer<String, UserEvent> kafkaProducer;
+    private final static String OPERATION_TYPE_PREFIX = "USER";
 
-    public CustomEventListenerProvider(KeycloakSession session) {
+    public CustomEventListenerProvider(KeycloakSession session, String bootstrapAddress) {
         this.session = session;
         this.model = session.realms();
+        kafkaProducer = KafkaProducerConfig.kafkaProducer(bootstrapAddress);
     }
 
     @Override
-    public void onEvent(Event event) {
-        log.info("EVENT ARRIVED 1");
-        if (KeycloakUtil.isUserRelatedEvent(event)) {
-            RealmModel realm = this.model.getRealm(event.getRealmId());
-            UserModel newRegisteredUser = this.session.users().getUserById(realm, event.getUserId());
-            // kafkaTemplate.send(KafkaConstants.Topics.USER_EVENTS_TOPIC_NAME, event.getUserId(), event);
-        }
-    }
+    public void onEvent(Event event) {}
 
     @Override
     public void onEvent(AdminEvent adminEvent, boolean b) {
-        log.info("EVENT ARRIVED 2");
         if (KeycloakUtil.isUserRelatedEvent(adminEvent)) {
-            // kafkaTemplate.send(KafkaConstants.Topics.USER_EVENTS_TOPIC_NAME, adminEvent.getId(), adminEvent);
+            RealmModel realm = this.model.getRealm(adminEvent.getRealmId());
+
+            UserEvent userEvent = UserEvent.builder()
+                    .userId(adminEvent.getAuthDetails().getUserId())
+                    .eventId(adminEvent.getId())
+                    .realmName(realm.getName())
+                    .operationType(String.format("%s_%s", adminEvent.getOperationType().toString() , OPERATION_TYPE_PREFIX))
+                    .user(KeycloakUtil.extractRepresentation(adminEvent))
+                    .build();
+
+
+            sendUserEvent(userEvent);
         }
+    }
+
+    public void sendUserEvent(UserEvent userEvent) {
+        ProducerRecord<String, UserEvent> producerRecord = new ProducerRecord<>(KeycloakUtil.getTopicNameByRealmName(userEvent.getRealmName()), userEvent);
+        kafkaProducer.send(producerRecord);
     }
 
     @Override

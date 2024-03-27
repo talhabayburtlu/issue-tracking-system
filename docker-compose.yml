@@ -25,6 +25,7 @@ services:
       - zookeeper
     ports:
       - 29092:29092
+      - 9092:9092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -57,10 +58,12 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: test
       DEBUG: true
       DEBUG_PORT: "*:8787"
+      KAFKA_BOOTSTRAP_ADDRESS: kafka:9092
     volumes:
       - ./keycloak-integration-service/target/keycloak-integration-service-0.0.1-SNAPSHOT.jar:/opt/keycloak/providers/custom-event-listener.jar
     depends_on:
       - postgres
+      - kafka
     ports:
       - 8090:8090
       - 8787:8787

@@ -50,7 +50,7 @@ public abstract class AuditableEntity implements Serializable {
 
 	public void setAuditableFields(UserContext userContext) {
 		OffsetDateTime now = OffsetDateTime.now();
-		String username = userContext.getUser().getUsername();
+		String username = Objects.nonNull(userContext) ? userContext.getUser().getUsername() : "SYSTEM";
 
 		if (Objects.isNull(createdDate)) {
 			setCreatedDate(now);

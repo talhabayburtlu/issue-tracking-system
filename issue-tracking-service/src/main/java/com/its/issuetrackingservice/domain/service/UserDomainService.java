@@ -1,5 +1,6 @@
 package com.its.issuetrackingservice.domain.service;
 
+import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.persistence.entity.User;
@@ -14,10 +15,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserDomainService {
 	private final UserRepository userRepository;
+	private final UserContext userContext;
 
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username, boolean isRequired) {
 		User user = userRepository.getUserByUsername(username);
-		if (Objects.isNull(user)) {
+		if (Objects.isNull(user) && isRequired) {
 			throw new DataNotFoundException(I18nExceptionKeys.USER_NOT_FOUND);
 		}
 		return user;
@@ -38,5 +40,17 @@ public class UserDomainService {
 		}
 
 		return user.get();
+	}
+
+	public User upsertUser(User user, boolean isSystemUser) {
+		user.setAuditableFields(!isSystemUser ? userContext: null);
+		return userRepository.save(user);
+	}
+
+	public void changeActiveStateOfUser(String username, boolean isActive) {
+		User user = getUserByKeycloakId(username);
+		user.setIsActive(isActive);
+
+		userRepository.save(user);
 	}
 }
