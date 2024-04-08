@@ -28,8 +28,14 @@ public class Project extends AuditableEntity {
 	private String name;
 
 	@NotBlank
-	@Column(name = "abbreviation", length = 5, nullable = false)
+	@Column(name = "abbreviation", length = 5)
 	private String abbreviation;
+
+	@Column(name = "keycloak_id", nullable = false, unique = true, length = 36)
+	private String keycloakId;
+
+	@Column(name = "is_active", nullable = false)
+	private Boolean isActive;
 
 	@ManyToOne
 	@JoinColumn(name = "parent_project_id")

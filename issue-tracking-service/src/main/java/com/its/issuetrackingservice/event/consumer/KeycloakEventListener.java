@@ -35,12 +35,4 @@ public class KeycloakEventListener implements MessageListener<String, KeycloakEv
     public void onMessage(ConsumerRecord<String, KeycloakEvent> data, Acknowledgment acknowledgment, Consumer<?, ?> consumer) {
         MessageListener.super.onMessage(data, acknowledgment, consumer);
     }
-
-    private void createUser(KeycloakEvent keycloakEvent) {
-
-    }
-
-    private void updateUser(KeycloakEvent keycloakEvent) {
-
-    }
 }

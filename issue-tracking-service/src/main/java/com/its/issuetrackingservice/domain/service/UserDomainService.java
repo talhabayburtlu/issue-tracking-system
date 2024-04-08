@@ -25,9 +25,9 @@ public class UserDomainService {
 		return user;
 	}
 
-	public User getUserByKeycloakId(String keycloakId) {
+	public User getUserByKeycloakId(String keycloakId, boolean isRequired) {
 		User user = userRepository.getUserByKeycloakId(keycloakId);
-		if (Objects.isNull(user)) {
+		if (Objects.isNull(user) && isRequired) {
 			throw new DataNotFoundException(I18nExceptionKeys.USER_NOT_FOUND);
 		}
 		return user;
@@ -47,10 +47,11 @@ public class UserDomainService {
 		return userRepository.save(user);
 	}
 
-	public void changeActiveStateOfUser(String username, boolean isActive) {
-		User user = getUserByKeycloakId(username);
-		user.setIsActive(isActive);
-
-		userRepository.save(user);
+	public void changeActiveStateOfUser(String keycloakId, boolean isActive, boolean isSystemUser) {
+		User user = getUserByKeycloakId(keycloakId, false);
+		if (Objects.nonNull(user)) {
+			user.setIsActive(isActive);
+			upsertUser(user, isSystemUser);
+		}
 	}
 }

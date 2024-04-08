@@ -51,7 +51,7 @@ public class KafkaConsumerConfig {
     @Bean
     private static String[] getTopicList() {
         return KafkaConstants.Topics.RELATED_REALM_NAMES.stream()
-                .map(realmName -> String.format("%s_%s", KafkaConstants.Topics.KEYCLOAK_USER_EVENT_TOPIC_PREFIX, realmName))
+                .map(realmName -> String.format("%s_%s", KafkaConstants.Topics.KEYCLOAK_EVENT_TOPIC_PREFIX, realmName))
                 .toArray(String[]::new);
     }
 }

@@ -11,4 +11,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("SELECT p FROM Project p JOIN p.users u WHERE u.id = :userId")
     Set<Project> getProjectsOfUser(Long userId);
 
+    Project getProjectByName(String name);
+    Project getProjectByKeycloakId(String keycloakId);
+
 }

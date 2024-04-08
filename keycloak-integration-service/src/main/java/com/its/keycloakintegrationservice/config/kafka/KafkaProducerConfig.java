@@ -1,7 +1,7 @@
 package com.its.keycloakintegrationservice.config.kafka;
 
-import com.its.keycloakintegrationservice.model.UserEvent;
-import com.its.keycloakintegrationservice.util.UserEventSerializer;
+import com.its.keycloakintegrationservice.model.KeycloakEvent;
+import com.its.keycloakintegrationservice.util.KeycloakEventSerializer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -14,12 +14,12 @@ public class KafkaProducerConfig {
         Properties properties = new Properties();
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UserEventSerializer.class);
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KeycloakEventSerializer.class);
 
         return properties;
     }
 
-    public static KafkaProducer<String, UserEvent> kafkaProducer(String bootstrapAddress) {
+    public static KafkaProducer<String, KeycloakEvent> kafkaProducer(String bootstrapAddress) {
         return new KafkaProducer<>(getProperties(bootstrapAddress));
     }
 

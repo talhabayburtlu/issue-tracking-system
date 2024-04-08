@@ -16,5 +16,5 @@ public class KeycloakEvent {
     private String eventId;
     private String realmName;
     private String operationType;
-    private Map<String, Object> user;
+    private Map<String, Object> payload;
 }

@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.persistence.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class UpdateUserKeycloakEventType extends AbstractKeycloakEvent {
@@ -19,8 +20,13 @@ public class UpdateUserKeycloakEventType extends AbstractKeycloakEvent {
 
     @Override
     public void processEvent(KeycloakEvent keycloakEvent) {
-        User user = getUserDomainService().getUserByKeycloakId(keycloakEvent.getUserId());
-        Map<String, Object> userMap = keycloakEvent.getUser();
+        User user = getUserDomainService().getUserByKeycloakId(keycloakEvent.getUserId(), false);
+        if (Objects.isNull(user)) {
+            user = new User();
+            user.setIsActive(Boolean.TRUE);
+        }
+
+        Map<String, Object> userMap = keycloakEvent.getPayload();
         if (userMap.containsKey("username")) {
             user.setUsername((String) userMap.get("username"));
         }

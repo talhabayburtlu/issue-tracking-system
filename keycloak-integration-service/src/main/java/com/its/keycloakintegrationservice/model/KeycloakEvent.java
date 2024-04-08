@@ -11,10 +11,10 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserEvent {
+public class KeycloakEvent {
     private String userId;
     private String eventId;
     private String realmName;
     private String operationType;
-    private Map<String, Object> user;
+    private Map<String, Object> payload;
 }

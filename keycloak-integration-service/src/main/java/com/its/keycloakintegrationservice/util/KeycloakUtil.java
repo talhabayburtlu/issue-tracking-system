@@ -16,7 +16,7 @@ public class KeycloakUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
     public static boolean isUserRelatedEvent(Object event) {
         if (event instanceof AdminEvent adminEvent) {
-            if (adminEvent.getResourceType().equals(ResourceType.USER)) {
+            if (adminEvent.getResourceType().equals(ResourceType.USER) || adminEvent.getResourceType().equals(ResourceType.GROUP)) {
                 return switch (adminEvent.getOperationType()) {
                     case CREATE, UPDATE, DELETE -> true;
                     default -> false;
@@ -43,6 +43,6 @@ public class KeycloakUtil {
     }
 
     public static String getTopicNameByRealmName(String realmName) {
-        return String.format("%s_%s" , KafkaConstants.Topics.KEYCLOAK_USER_EVENT_TOPIC_PREFIX, realmName);
+        return String.format("%s_%s" , KafkaConstants.Topics.KEYCLOAK_EVENT_TOPIC_PREFIX, realmName);
     }
 }

@@ -20,23 +20,20 @@ public class CreateUserKeycloakEventType extends AbstractKeycloakEvent {
 
     @Override
     public void processEvent(KeycloakEvent keycloakEvent) {
-        Map<String, Object> userMap = keycloakEvent.getUser();
-        User existingUser = getUserDomainService().getUserByUsername((String) userMap.get("username"), Boolean.FALSE);
-        if (Objects.nonNull(existingUser)) {
-            existingUser.setKeycloakId(keycloakEvent.getUserId());
-            existingUser.setIsActive(Boolean.TRUE);
-            getUserDomainService().upsertUser(existingUser, Boolean.TRUE);
-            return;
+        Map<String, Object> userMap = keycloakEvent.getPayload();
+        User user = getUserDomainService().getUserByUsername((String) userMap.get("username"), Boolean.FALSE);
+        if (Objects.isNull(user)) {
+            user = User.builder()
+                    .username((String) userMap.get("username"))
+                    .firstName((String) userMap.get("firstName"))
+                    .lastName((String) userMap.get("lastName"))
+                    .email((String) userMap.get("email"))
+                    .build();
         }
 
-        User user = User.builder()
-                .keycloakId(keycloakEvent.getUserId())
-                .username((String) userMap.get("username"))
-                .firstName((String) userMap.get("firstName"))
-                .lastName((String) userMap.get("lastName"))
-                .email((String) userMap.get("email"))
-                .isActive(Boolean.TRUE)
-                .build();
+        user.setKeycloakId(keycloakEvent.getUserId());
+        user.setIsActive(Boolean.TRUE);
+
 
         getUserDomainService().upsertUser(user, Boolean.TRUE);
     }

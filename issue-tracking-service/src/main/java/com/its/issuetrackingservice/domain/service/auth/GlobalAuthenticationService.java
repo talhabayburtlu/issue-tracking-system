@@ -18,7 +18,7 @@ public class GlobalAuthenticationService {
     private final ProjectDomainService projectDomainService;
 
     public UserContext generateUserContext(String keycloakId) {
-        User user = userDomainService.getUserByKeycloakId(keycloakId);
+        User user = userDomainService.getUserByKeycloakId(keycloakId, true);
         Set<Project> projects = projectDomainService.getProjectsOfUser(user.getId());
 
         return UserContext.builder()

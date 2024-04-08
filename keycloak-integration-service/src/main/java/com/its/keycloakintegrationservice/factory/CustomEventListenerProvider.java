@@ -1,7 +1,7 @@
 package com.its.keycloakintegrationservice.factory;
 
 import com.its.keycloakintegrationservice.config.kafka.KafkaProducerConfig;
-import com.its.keycloakintegrationservice.model.UserEvent;
+import com.its.keycloakintegrationservice.model.KeycloakEvent;
 import com.its.keycloakintegrationservice.util.KeycloakUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,7 @@ import org.keycloak.models.RealmProvider;
 public class CustomEventListenerProvider implements EventListenerProvider {
     private final KeycloakSession session;
     private final RealmProvider model;
-    private KafkaProducer<String, UserEvent> kafkaProducer;
-    private final static String OPERATION_TYPE_PREFIX = "USER";
+    private KafkaProducer<String, KeycloakEvent> kafkaProducer;
 
     public CustomEventListenerProvider(KeycloakSession session, String bootstrapAddress) {
         this.session = session;
@@ -36,21 +35,20 @@ public class CustomEventListenerProvider implements EventListenerProvider {
         if (KeycloakUtil.isUserRelatedEvent(adminEvent)) {
             RealmModel realm = this.model.getRealm(adminEvent.getRealmId());
 
-            UserEvent userEvent = UserEvent.builder()
+            KeycloakEvent keycloakEvent = KeycloakEvent.builder()
                     .userId(adminEvent.getAuthDetails().getUserId())
                     .eventId(adminEvent.getId())
                     .realmName(realm.getName())
-                    .operationType(String.format("%s_%s", adminEvent.getOperationType().toString() , OPERATION_TYPE_PREFIX))
-                    .user(KeycloakUtil.extractRepresentation(adminEvent))
+                    .operationType(String.format("%s_%s", adminEvent.getOperationType().toString() , adminEvent.getResourceType()))
+                    .payload(KeycloakUtil.extractRepresentation(adminEvent))
                     .build();
 
-
-            sendUserEvent(userEvent);
+            sendKeycloakEvent(keycloakEvent);
         }
     }
 
-    public void sendUserEvent(UserEvent userEvent) {
-        ProducerRecord<String, UserEvent> producerRecord = new ProducerRecord<>(KeycloakUtil.getTopicNameByRealmName(userEvent.getRealmName()), userEvent);
+    public void sendKeycloakEvent(KeycloakEvent keycloakEvent) {
+        ProducerRecord<String, KeycloakEvent> producerRecord = new ProducerRecord<>(KeycloakUtil.getTopicNameByRealmName(keycloakEvent.getRealmName()), keycloakEvent);
         kafkaProducer.send(producerRecord);
     }
 
