@@ -28,7 +28,8 @@ public class CreateGroupKeycloakEventType extends AbstractKeycloakEvent {
                     .build();
         }
 
-        project.setKeycloakId((String) groupMap.get("id"));
+        String keycloakId = getResourcePathToken(keycloakEvent,1);
+        project.setKeycloakId(keycloakId);
         project.setIsActive(Boolean.TRUE);
 
 

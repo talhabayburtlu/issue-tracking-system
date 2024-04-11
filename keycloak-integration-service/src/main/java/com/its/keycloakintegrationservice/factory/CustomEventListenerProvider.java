@@ -40,6 +40,7 @@ public class CustomEventListenerProvider implements EventListenerProvider {
                     .eventId(adminEvent.getId())
                     .realmName(realm.getName())
                     .operationType(String.format("%s_%s", adminEvent.getOperationType().toString() , adminEvent.getResourceType()))
+                    .resourcePath(adminEvent.getResourcePath())
                     .payload(KeycloakUtil.extractRepresentation(adminEvent))
                     .build();
 

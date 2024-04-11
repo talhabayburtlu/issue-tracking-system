@@ -1,5 +1,7 @@
 package com.its.issuetrackingservice.event.model;
 
+import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
+import com.its.issuetrackingservice.domain.exception.InternalServerException;
 import com.its.issuetrackingservice.domain.service.ProjectDomainService;
 import com.its.issuetrackingservice.domain.service.UserDomainService;
 import com.its.issuetrackingservice.event.enums.KeycloakEventType;
@@ -23,11 +25,21 @@ public abstract class AbstractKeycloakEvent {
     private ProjectDomainService projectDomainService;
 
     public abstract KeycloakEventType supportedKeycloakEventType();
-
     public abstract void processEvent(KeycloakEvent keycloakEvent);
 
     @PostConstruct
     public void initialize() {
         KeycloakEventFactory.register(this);
+    }
+
+    public String getResourcePathToken(KeycloakEvent keycloakEvent, Integer tokenIndex) {
+        String[] tokens = keycloakEvent.getResourcePath().split("/");
+
+        if (tokens.length <= tokenIndex) {
+            throw new InternalServerException(I18nExceptionKeys.KEYCLOAK_EVENT_RESOURCE_PATH_TOKEN_SIZE_EXCEEDED,
+                    String.format("token size: %d, given token index: %d", tokens.length, tokenIndex));
+        }
+
+        return tokens[tokenIndex];
     }
 }

@@ -13,12 +13,12 @@ public class KeycloakEventFactory {
 
     static Map<KeycloakEventType, AbstractKeycloakEvent> keycloakEvents = new HashMap<>();
 
-    public static AbstractKeycloakEvent getKeycloakEvent(KeycloakEvent keycloakEvent) {
-        return getKeycloakEvent(KeycloakEventType.valueOf(keycloakEvent.getOperationType()));
+    public static AbstractKeycloakEvent getKeycloakEvent(KeycloakEvent keycloakEvent, boolean reqired) {
+        return getKeycloakEvent(KeycloakEventType.getKeycloakEventTypeByValue(keycloakEvent.getOperationType(), reqired), reqired);
     }
 
-    public static AbstractKeycloakEvent getKeycloakEvent(KeycloakEventType keycloakEventType) {
-        if (!keycloakEvents.containsKey(keycloakEventType)) {
+    public static AbstractKeycloakEvent getKeycloakEvent(KeycloakEventType keycloakEventType, boolean required) {
+        if (!keycloakEvents.containsKey(keycloakEventType) && required) {
             throw new InternalServerException(I18nExceptionKeys.KEYCLOAK_EVENT_TYPE_NOT_IMPLEMENTED);
         }
 

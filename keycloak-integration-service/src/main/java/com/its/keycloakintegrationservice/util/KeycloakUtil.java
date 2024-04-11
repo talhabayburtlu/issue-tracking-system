@@ -16,7 +16,8 @@ public class KeycloakUtil {
     private static final ObjectMapper mapper = new ObjectMapper();
     public static boolean isUserRelatedEvent(Object event) {
         if (event instanceof AdminEvent adminEvent) {
-            if (adminEvent.getResourceType().equals(ResourceType.USER) || adminEvent.getResourceType().equals(ResourceType.GROUP)) {
+            if (adminEvent.getResourceType().equals(ResourceType.USER) || adminEvent.getResourceType().equals(ResourceType.GROUP) ||
+                    adminEvent.getResourceType().equals(ResourceType.GROUP_MEMBERSHIP)) {
                 return switch (adminEvent.getOperationType()) {
                     case CREATE, UPDATE, DELETE -> true;
                     default -> false;

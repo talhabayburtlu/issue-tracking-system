@@ -16,6 +16,7 @@ public class DeleteUserKeycloakEventType extends AbstractKeycloakEvent {
 
     @Override
     public void processEvent(KeycloakEvent keycloakEvent) {
-        getUserDomainService().changeActiveStateOfUser(keycloakEvent.getUserId(), Boolean.FALSE, Boolean.TRUE);
+        String userKeycloakId = getResourcePathToken(keycloakEvent,1);
+        getUserDomainService().changeActiveStateOfUser(userKeycloakId, Boolean.FALSE, Boolean.TRUE);
     }
 }
