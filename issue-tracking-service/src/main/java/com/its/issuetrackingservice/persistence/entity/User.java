@@ -42,12 +42,7 @@ public class User extends AuditableEntity {
     @Column(name = "is_active", nullable = false)
     private Boolean isActive;
 
-	@ManyToMany
-	@JoinTable(
-			name = "project_users",
-			joinColumns = @JoinColumn(name = "user_id"),
-			inverseJoinColumns = @JoinColumn(name = "project_id")
-	)
-	@Lazy
-	private Set<Project> projects;
+    @Lazy
+    @OneToMany(mappedBy = "user")
+	private Set<Membership> memberships;
 }

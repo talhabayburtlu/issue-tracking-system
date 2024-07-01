@@ -28,29 +28,28 @@ public class Project extends AuditableEntity {
 	private String name;
 
 	@NotBlank
+	@Column(name = "description", length = 128)
+	private String description;
+
+	@NotBlank
 	@Column(name = "abbreviation", length = 5)
 	private String abbreviation;
-
-	@Column(name = "keycloak_id", nullable = false, unique = true, length = 36)
-	private String keycloakId;
 
 	@Column(name = "is_active", nullable = false)
 	private Boolean isActive;
 
-	@ManyToOne
-	@JoinColumn(name = "parent_project_id")
-	@Lazy
-	private Project parentProject;
-
-	@ManyToMany
-	@JoinTable(
-			name = "project_users",
-			joinColumns = @JoinColumn(name = "project_id"),
-			inverseJoinColumns = @JoinColumn(name = "user_id")
-	)
-	@Lazy
-	private Set<User> users;
+	@Column(name = "keycloak_id", nullable = false, unique = true, length = 36)
+	private String keycloakId;
 
 	@OneToMany(mappedBy = "project")
+	@Lazy
+	private Set<Membership> memberships;
+
+	@OneToMany(mappedBy = "project")
+	@Lazy
 	private Set<State> states;
+
+	@OneToMany(mappedBy = "project")
+	@Lazy
+	private Set<Category> categories;
 }

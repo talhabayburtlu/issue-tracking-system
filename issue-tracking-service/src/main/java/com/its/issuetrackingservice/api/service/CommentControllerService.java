@@ -4,7 +4,6 @@ import com.its.issuetrackingservice.api.dto.request.CommentRequest;
 import com.its.issuetrackingservice.api.dto.response.CommentResponse;
 import com.its.issuetrackingservice.api.mapper.CommentMapper;
 import com.its.issuetrackingservice.domain.service.CommentDomainService;
-import com.its.issuetrackingservice.persistence.entity.Comment;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

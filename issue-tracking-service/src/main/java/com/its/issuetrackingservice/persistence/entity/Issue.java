@@ -1,6 +1,5 @@
 package com.its.issuetrackingservice.persistence.entity;
 
-import com.its.issuetrackingservice.domain.enums.IssueCategory;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -32,18 +31,15 @@ public class Issue extends AuditableEntity {
 	@Column(name = "description")
 	private String description;
 
-	@Column(name = "abbreviation", length = 10, nullable = false, unique = true)
-	private String abbreviation;
+	@Column(name = "estimation", nullable = false)
+	private Long estimation;
 
-	@Column(name = "number", nullable = false)
-	private Long number;
+	@Column(name = "spentTime", nullable = false)
+	private Long spentTime;
 
-	@Enumerated(EnumType.STRING)
+	@ManyToOne
 	@Column(name = "category")
-	private IssueCategory category;
-
-	@Column(name = "points")
-	private Integer points;
+	private Category category;
 
 	@ManyToOne
 	@JoinColumn(name = "state_id")
@@ -57,17 +53,15 @@ public class Issue extends AuditableEntity {
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
-	@ManyToOne
-	@JoinColumn(name = "creator_user_id", nullable = false)
-	private User creatorUser;
-
-	@ManyToOne
-	@JoinColumn(name = "verifier_user_id", nullable = false)
-	private User verifierUser;
+	@OneToMany(mappedBy = "issue")
+	private Set<Activity> activities;
 
 	@OneToMany(mappedBy = "issue")
-	private List<Attachment> attachments;
+	private Set<Participation> participants;
 
 	@OneToMany(mappedBy = "issue")
-	private Set<Comment> comments;
+	private List<IssueSubsystem> subsystems;
+
+	@OneToMany(mappedBy = "issue")
+	private List<IssueAttachment> attachments;
 }

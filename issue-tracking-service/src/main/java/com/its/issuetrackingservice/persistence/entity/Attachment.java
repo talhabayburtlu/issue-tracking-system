@@ -1,6 +1,6 @@
 package com.its.issuetrackingservice.persistence.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.its.issuetrackingservice.domain.enums.AttachmentType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +21,7 @@ public class Attachment extends AuditableEntity {
 	private Long id;
 
 	@Column(name = "attachmentType", nullable = false)
-	private String attachmentType;
+	@Enumerated(EnumType.STRING)
+	private AttachmentType attachmentType;
 
-	@ManyToOne
-	@JoinColumn(name = "issue_id")
-	@JsonBackReference
-	private Issue issue;
 }

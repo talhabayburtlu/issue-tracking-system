@@ -4,7 +4,6 @@ import com.its.issuetrackingservice.api.model.UserContext;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.exception.WrongUsageException;
-import com.its.issuetrackingservice.persistence.entity.Comment;
 import com.its.issuetrackingservice.persistence.entity.Issue;
 import com.its.issuetrackingservice.persistence.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
