@@ -1,6 +1,7 @@
 package com.its.issuetrackingservice.domain.commands.issue;
 
 import com.its.issuetrackingservice.domain.commands.Command;
+import com.its.issuetrackingservice.domain.commands.Invoker;
 import com.its.issuetrackingservice.domain.service.IssueService;
 import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
@@ -15,18 +16,21 @@ import java.util.Optional;
 
 
 @Builder
-public class CreateIssueCommand implements Command {
+public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;
+    private Long issueId;
     private IssueRequest issueRequest;
+    private Boolean sendNotification;
 
-    // Outputs
-    private IssueDetailResponse issueDetailResponse;
+    // Generates
+    private Issue issue;
 
     // Services
     private IssueService issueService;
     private IssueMapper issueMapper;
     private UserContext userContext;
+    private Invoker invoker;
 
     @PostConstruct
     public void init() {
@@ -36,24 +40,36 @@ public class CreateIssueCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public IssueDetailResponse execute() {
         issueService.validateAccessToProject(projectId);
 
-        Issue issue = issueService.createIssue(issueRequest, projectId);
-        // TODO: Build send notification command and execute
+        // Update issue by issue request
+        UpdateIssueCommand command = UpdateIssueCommand.builder()
+                .issueRequest(issueRequest)
+                .issueId(issueId)
+                .projectId(projectId)
+                .returnResultAfterExecution(Boolean.FALSE)
+                .build();
+        invoker.run(command);
 
-        this.issueDetailResponse = issueMapper.toDetailResponse(issue);
-    }
+        // Publish issue after updating
+        Issue issue = command.getIssue();
+        issueService.publishDraftIssue(issue);
 
-    @Override
-    public String getName() {
+        if (Boolean.TRUE.equals(sendNotification)) {
+            // TODO: Build send notification command and execute
+        }
+
+        if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
+            return getResult().orElse(null);
+        }
+
         return null;
     }
 
     @Override
     public Optional<IssueDetailResponse> getResult() {
-        return Optional.ofNullable(issueDetailResponse);
+        return Optional.ofNullable(issueMapper.toDetailResponse(issue));
     }
-
 
 }

@@ -4,24 +4,24 @@ import com.its.issuetrackingservice.domain.commands.Command;
 import com.its.issuetrackingservice.domain.service.IssueService;
 import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
-import com.its.issuetrackingservice.infrastructure.dto.response.IssueSummaryResponse;
+import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
+import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.Builder;
 
-import java.util.List;
 import java.util.Optional;
 
 
 @Builder
-public class GetSprintIssuesSummaryCommand extends Command<List<IssueSummaryResponse>> {
+public class CreateDraftIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;
-    private Long sprintId;
+    private IssueRequest issueRequest;
 
     // Generates
-    private List<Issue> issues;
+    private Issue issue;
 
     // Services
     private IssueService issueService;
@@ -35,11 +35,14 @@ public class GetSprintIssuesSummaryCommand extends Command<List<IssueSummaryResp
         this.userContext = SpringContext.getBean(UserContext.class);
     }
 
-    @Override
-    public List<IssueSummaryResponse> execute() {
-        userContext.applyAccessToProject(projectId);
 
-        this.issues = issueService.getSprintIssues(projectId, sprintId);
+    @Override
+    public IssueDetailResponse execute() {
+        issueService.validateAccessToProject(projectId);
+
+        this.issue = issueService.createDraftIssue(issueRequest, projectId);
+        // TODO: Build send notification command and execute
+
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
         }
@@ -48,13 +51,9 @@ public class GetSprintIssuesSummaryCommand extends Command<List<IssueSummaryResp
     }
 
     @Override
-    public String getName() {
-        return null;
+    public Optional<IssueDetailResponse> getResult() {
+        return Optional.ofNullable(issueMapper.toDetailResponse(issue));
     }
 
-    @Override
-    public Optional<List<IssueSummaryResponse>> getResult() {
-        return Optional.ofNullable(issueMapper.toSummaryListResponse(issues));
-    }
 
 }

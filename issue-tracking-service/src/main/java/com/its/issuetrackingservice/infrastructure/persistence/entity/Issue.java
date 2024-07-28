@@ -41,6 +41,9 @@ public class Issue extends AuditableEntity {
 	@Column(name = "spentTime", nullable = false)
 	private Long spentTime;
 
+	@Column(name = "isDraft", nullable = false)
+	private Boolean isDraft;
+
 	@ManyToOne
 	@Column(name = "category")
 	private Category category;

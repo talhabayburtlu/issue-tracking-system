@@ -9,20 +9,23 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
-import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Optional;
 
 
-@Builder
-public class UpdateIssueCommand implements Command {
+@Getter
+@SuperBuilder
+public class UpdateIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;
     private Long issueId;
     private IssueRequest issueRequest;
+    private Boolean sendNotification = Boolean.TRUE;
 
-    // Outputs
-    private IssueDetailResponse issueDetailResponse;
+    // Generates
+    private Issue issue;
 
     // Services
     private IssueService issueService;
@@ -37,23 +40,25 @@ public class UpdateIssueCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public IssueDetailResponse execute() {
         issueService.validateAccessToProject(projectId);
 
-        Issue issue = issueService.updateIssue(issueRequest, issueId);
-        // TODO: Build send notification command and execute
+        issue = issueService.updateIssue(issueRequest, issueId);
+        if (Boolean.TRUE.equals(sendNotification)) {
+            // TODO: Build send notification command and execute
+        }
 
-        this.issueDetailResponse = issueMapper.toDetailResponse(issue);
-    }
 
-    @Override
-    public String getName() {
+        if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
+            return getResult().orElse(null);
+        }
+
         return null;
     }
 
     @Override
     public Optional<IssueDetailResponse> getResult() {
-        return Optional.ofNullable(issueDetailResponse);
+        return Optional.ofNullable(issueMapper.toDetailResponse(issue));
     }
 
 

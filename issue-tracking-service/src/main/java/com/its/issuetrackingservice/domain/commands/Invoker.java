@@ -6,10 +6,11 @@ import org.springframework.stereotype.Service;
 public class Invoker {
     private static final String START_COMMAND_FORMAT = "Starting to running the command: %s";
     private static final String FINISH_COMMAND_FORMAT = "Finishing running the command: %s";
-    public void run(Command command) {
+    public <R> R run(Command<R> command) {
         logCommand(command, START_COMMAND_FORMAT);
-        command.execute();
+        R result = command.execute();
         logCommand(command, FINISH_COMMAND_FORMAT);
+        return result;
     }
 
     private void logCommand(Command command, String format) {

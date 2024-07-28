@@ -15,12 +15,12 @@ import java.util.Optional;
 
 
 @Builder
-public class GetBacklogIssuesSummaryCommand implements Command {
+public class GetBacklogIssuesSummaryCommand extends Command<List<IssueSummaryResponse>> {
     // Inputs
     private Long projectId;
 
-    // Outputs
-    private List<IssueSummaryResponse> issueSummaryResponses;
+    // Generates
+    private List<Issue> issues;
 
     // Services
     private IssueService issueService;
@@ -35,21 +35,20 @@ public class GetBacklogIssuesSummaryCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public List<IssueSummaryResponse> execute() {
         userContext.applyAccessToProject(projectId);
 
-        List<Issue> issues = issueService.getBacklogIssues(projectId);
-        this.issueSummaryResponses = issueMapper.toSummaryListResponse(issues);
-    }
+        this.issues = issueService.getBacklogIssues(projectId);
+        if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
+            return getResult().orElse(null);
+        }
 
-    @Override
-    public String getName() {
         return null;
     }
 
     @Override
     public Optional<List<IssueSummaryResponse>> getResult() {
-        return Optional.ofNullable(issueSummaryResponses);
+        return Optional.ofNullable(issueMapper.toSummaryListResponse(issues));
     }
 
 }

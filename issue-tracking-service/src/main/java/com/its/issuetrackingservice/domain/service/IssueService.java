@@ -2,6 +2,7 @@ package com.its.issuetrackingservice.domain.service;
 
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
+import com.its.issuetrackingservice.domain.exception.WrongUsageException;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public class IssueService {
     private final IssueRepository issueRepository;
     private final IssueMapper issueMapper;
 
-    public Issue createIssue(IssueRequest issueRequest, Long projectId) {
+    public Issue createDraftIssue(IssueRequest issueRequest, Long projectId) {
         Issue issue = issueMapper.toEntity(issueRequest);
         issue.setSpentTime(0L);
 
@@ -70,6 +72,19 @@ public class IssueService {
         issue.setAuditableFields(userContext);
 
         return issueRepository.save(issue);
+    }
+
+    public void publishDraftIssue(Issue issue) {
+        if (Objects.isNull(issue)) {
+            throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND);
+        }
+
+        if (issue.getIsDraft()) {
+            throw new WrongUsageException(I18nExceptionKeys.ALREADY_PUBLISHED_ISSUE_CAN_NOT_PUBLISHED);
+        }
+
+        issue.setIsDraft(Boolean.FALSE);
+        upsertIssue(issue);
     }
 
     public List<Issue> getSprintIssues(Long projectId, Long sprintId) {

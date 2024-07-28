@@ -14,13 +14,13 @@ import java.util.Optional;
 
 
 @Builder
-public class GetIssueDetailCommand implements Command {
+public class GetIssueDetailCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;
     private Long issueId;
 
-    // Outputs
-    private IssueDetailResponse issueDetailResponse;
+    // Generates
+    private Issue issue;
 
     // Services
     private IssueService issueService;
@@ -35,21 +35,20 @@ public class GetIssueDetailCommand implements Command {
     }
 
     @Override
-    public void execute() {
+    public IssueDetailResponse execute() {
         userContext.applyAccessToProject(projectId);
 
-        Issue issue = issueService.getIssueById(issueId);
-        this.issueDetailResponse = issueMapper.toDetailResponse(issue);
-    }
+        this.issue = issueService.getIssueById(issueId);
+        if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
+            return getResult().orElse(null);
+        }
 
-    @Override
-    public String getName() {
         return null;
     }
 
     @Override
     public Optional<IssueDetailResponse> getResult() {
-        return Optional.ofNullable(issueDetailResponse);
+        return Optional.ofNullable(issueMapper.toDetailResponse(issue));
     }
 
 }

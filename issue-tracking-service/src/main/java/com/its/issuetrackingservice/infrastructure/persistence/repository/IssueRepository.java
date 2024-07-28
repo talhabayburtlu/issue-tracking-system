@@ -13,4 +13,5 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     List<Issue> getAllByProjectIdAndSprintIdOrderByCreatedDateAsc(Long projectId, Long sprintId);
 
     List<Issue> getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(Long projectId);
+
 }

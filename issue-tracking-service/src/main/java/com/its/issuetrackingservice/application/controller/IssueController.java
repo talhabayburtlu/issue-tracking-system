@@ -26,8 +26,7 @@ public class IssueController {
                 .projectId(projectId)
                 .sprintId(sprintId)
                 .build();
-        invoker.run(command);
-        return GenericRestResponse.of(command.getResult().orElse(null));
+        return GenericRestResponse.of(invoker.run(command));
     }
 
     @GetMapping("/project/{project_id}")
@@ -35,8 +34,7 @@ public class IssueController {
         GetBacklogIssuesSummaryCommand command = GetBacklogIssuesSummaryCommand.builder()
                 .projectId(projectId)
                 .build();
-        invoker.run(command);
-        return GenericRestResponse.of(command.getResult().orElse(null));
+        return GenericRestResponse.of(invoker.run(command));
     }
 
     @GetMapping("/project/{project_id}/{issue_id}")
@@ -45,20 +43,29 @@ public class IssueController {
                 .projectId(projectId)
                 .issueId(issueId)
                 .build();
-        invoker.run(command);
-        return GenericRestResponse.of(command.getResult().orElse(null));
+        return GenericRestResponse.of(invoker.run(command));
     }
 
 
     @PostMapping("/project/{project_id}")
-    public GenericRestResponse<IssueDetailResponse> createIssue(@RequestBody IssueRequest issueRequest, @PathVariable("project_id") Long projectId) {
-        CreateIssueCommand command = CreateIssueCommand.builder()
+    public GenericRestResponse<IssueDetailResponse> createDraftIssue(@RequestBody IssueRequest issueRequest, @PathVariable("project_id") Long projectId) {
+        CreateDraftIssueCommand command = CreateDraftIssueCommand.builder()
                 .issueRequest(issueRequest)
                 .projectId(projectId)
                 .build();
-        invoker.run(command);
-        return GenericRestResponse.of(command.getResult().orElse(null));
+        return GenericRestResponse.of(invoker.run(command));
     }
+
+    @PostMapping("{issue_id}/project/{project_id}")
+    public GenericRestResponse<IssueDetailResponse> publishDraftIssue(@RequestBody IssueRequest issueRequest, @PathVariable("issue_id") Long issueId, @PathVariable("project_id") Long projectId) {
+        PublishDraftIssueCommand command = PublishDraftIssueCommand.builder()
+                .issueRequest(issueRequest)
+                .issueId(issueId)
+                .projectId(projectId)
+                .build();
+        return GenericRestResponse.of(invoker.run(command));
+    }
+
 
     @PatchMapping("{issue_id}/project/{project_id}")
     public GenericRestResponse<IssueDetailResponse> updateIssue(@RequestBody IssueRequest issueRequest,
@@ -68,9 +75,9 @@ public class IssueController {
                 .issueRequest(issueRequest)
                 .issueId(issueId)
                 .projectId(projectId)
+                .sendNotification(Boolean.TRUE)
                 .build();
-        invoker.run(command);
-        return GenericRestResponse.of(command.getResult().orElse(null));
+        return GenericRestResponse.of(invoker.run(command));
     }
 
 }
