@@ -41,7 +41,6 @@ public class CreateDraftIssueCommand extends Command<IssueDetailResponse> {
         issueService.validateAccessToProject(projectId);
 
         this.issue = issueService.createDraftIssue(issueRequest, projectId);
-        // TODO: Build send notification command and execute
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);

@@ -2,16 +2,16 @@ package com.its.issuetrackingservice.infrastructure.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Entity()
-@Table(name = "activity_item_attachment")
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
-public class ActivityItemAttachment extends AuditableEntity {
+public class ActivityAttachment extends Attachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "activity_item_attachment_sequence")
@@ -20,11 +20,7 @@ public class ActivityItemAttachment extends AuditableEntity {
     private Long id;
 
     @ManyToOne
-    @Column(name = "attachment_id", nullable = false)
-    private Attachment attachment;
-
-    @ManyToOne
-    @Column(name = "activity_item_id", nullable = false)
-    private ActivityItem activityItem;
+    @Column(name = "activity_id", nullable = false)
+    private Activity activity;
 
 }

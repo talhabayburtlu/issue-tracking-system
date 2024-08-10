@@ -2,9 +2,12 @@ package com.its.issuetrackingservice.infrastructure.persistence.mapper;
 
 import com.its.issuetrackingservice.domain.service.AttachmentService;
 import com.its.issuetrackingservice.infrastructure.configuration.mapper.MapStructConfig;
+import com.its.issuetrackingservice.infrastructure.dto.response.ActivityAttachmentSummaryResponse;
 import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentResponse;
-import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentSummaryResponse;
+import com.its.issuetrackingservice.infrastructure.dto.response.IssueAttachmentSummaryResponse;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.ActivityAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Attachment;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttachment;
 import lombok.Setter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,6 +15,7 @@ import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(config = MapStructConfig.class)
 public abstract class AttachmentMapper {
@@ -20,15 +24,21 @@ public abstract class AttachmentMapper {
     protected AttachmentService attachmentService;
 
     @Mapping(source = "issue.id", target = "issueId")
-    public abstract AttachmentSummaryResponse toSummaryResponse(Attachment attachment);
+    public abstract IssueAttachmentSummaryResponse toIssueAttachmentSummaryResponse(IssueAttachment attachment);
 
-    @Mapping(source = "issue.id", target = "issueId")
+    @Mapping(source = "activityItem.id", target = "activityItemId")
+    public abstract ActivityAttachmentSummaryResponse toActivityItemAttachmentSummaryResponse(ActivityAttachment attachment);
+
     @Mapping(target = "content", source = "attachment",qualifiedByName = "setAttachmentContent")
     public abstract AttachmentResponse toResponse(Attachment attachment);
 
     @Mapping(source = "issue.id", target = "issueId")
     @Mapping(target = "qualified", qualifiedByName = "setAttachmentContent")
-    public abstract List<AttachmentResponse> toListResponse(List<Attachment> attachmentList);
+    public abstract List<AttachmentResponse> toIssueAttachmentListResponse(Set<IssueAttachment> attachmentList);
+
+    @Mapping(source = "activityItemId.id", target = "activityItemId")
+    @Mapping(target = "qualified", qualifiedByName = "setAttachmentContent")
+    public abstract List<AttachmentResponse> toActivityItemAttachmentListResponse(Set<ActivityAttachment> attachmentList);
 
     @Named("setAttachmentContent")
     public List<Byte> setAttachmentContent(Attachment attachment) {

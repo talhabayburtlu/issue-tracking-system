@@ -1,27 +1,25 @@
 package com.its.issuetrackingservice.infrastructure.dto.response;
 
 import com.its.issuetrackingservice.infrastructure.dto.AuditableEntityDto;
+import com.its.issuetrackingservice.infrastructure.dto.request.ActivityItemRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class IssueDetailResponse extends AuditableEntityDto {
+public class ActivityResponse extends AuditableEntityDto {
     @Serial
-    private static final long serialVersionUID = -7612219584240385454L;
+    private static final long serialVersionUID = 7665975947661825937L;
 
     @EqualsAndHashCode.Include
     private Long id;
-
-    private String title;
     private String description;
-    private String code;
-    private Long spentTime;
-    private Long estimation;
-    private Long stateId;
-    private Long sprintId;
-    private Long categoryId;
-    private ParticipantsDetailResponse participants;
+    private String activityType;
+    private Long issueId;
+    private Long creatorUserId;
+    private Set<ActivityItemRequest> activityItems;
+
 }

@@ -8,12 +8,15 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Builder
-public class CommentRequest implements Serializable {
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
+public class ActivityItemRequest implements Serializable {
     @Serial
     private static final long serialVersionUID = 7665975947661825937L;
 
-    private String description;
+    private String fieldName;
+    private String oldValue;
+    private String newValue;
+    private String type;
 
 }

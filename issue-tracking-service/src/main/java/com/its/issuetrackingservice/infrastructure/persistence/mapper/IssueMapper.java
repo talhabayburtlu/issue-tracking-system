@@ -9,7 +9,7 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(config = MapStructConfig.class, uses = {SprintMapper.class, UserMapper.class, ProjectMapper.class, StateMapper.class, ParticipatorsMapper.class})
+@Mapper(config = MapStructConfig.class, uses = {SprintMapper.class, UserMapper.class, ProjectMapper.class, StateMapper.class, CategoryMapper.class, ParticipatorsMapper.class})
 public abstract class IssueMapper {
 
     @Mapping(source = "project", target = "projectId")
@@ -19,14 +19,12 @@ public abstract class IssueMapper {
 
     public abstract List<IssueSummaryResponse> toSummaryListResponse(List<Issue> issues);
 
-    @Mapping(source = "project", target = "projectId")
     @Mapping(source = "sprint", target = "sprintId")
     @Mapping(source = "state", target = "stateId")
     @Mapping(source = "category", target = "categoryId")
-    @Mapping(source = "subsystems", target = "subsystemIds")
+    // @Mapping(source = "subsystems", target = "subsystemIds")
     public abstract IssueDetailResponse toDetailResponse(Issue issue);
 
-    @Mapping(source = "projectId", target = "project")
     @Mapping(source = "sprintId", target = "sprint")
     @Mapping(source = "categoryId", target = "category")
     public abstract Issue toEntity(IssueRequest issueRequest);

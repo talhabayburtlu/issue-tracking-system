@@ -1,7 +1,8 @@
 package com.its.issuetrackingservice.domain.enums;
 
 public enum ActivityItemType {
+    CREATE,
     UPDATE,
-    SPENT_TIME,
-    COMMENT
+    DELETE
+
 }

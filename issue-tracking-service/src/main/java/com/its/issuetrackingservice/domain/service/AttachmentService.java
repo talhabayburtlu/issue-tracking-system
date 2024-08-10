@@ -1,68 +1,99 @@
 package com.its.issuetrackingservice.domain.service;
 
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
+import com.its.issuetrackingservice.domain.enums.AttachmentType;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.domain.exception.WrongUsageException;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
-import com.its.issuetrackingservice.infrastructure.persistence.entity.Attachment;
-import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.*;
+import com.its.issuetrackingservice.infrastructure.persistence.repository.ActivityAttachmentRepository;
 import com.its.issuetrackingservice.infrastructure.persistence.repository.AttachmentRepository;
+import com.its.issuetrackingservice.infrastructure.persistence.repository.IssueAttachmentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MimeType;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class AttachmentService {
 
     private final IssueService issueService;
+    private final ActivityService activityService;
     private final BucketService bucketService;
     private final NameGeneratorService nameGeneratorService;
     private final AttachmentRepository attachmentRepository;
+    private final IssueAttachmentRepository issueAttachmentRepository;
+    private final ActivityAttachmentRepository activityAttachmentRepository;
     private final UserContext userContext;
-    private final Long MAX_ATTACHMENT_SIZE_IN_BYTES = 10024000L;
-    private final Long MAX_ATTACHMENT_COUNT = 5L;
-    private final List<MimeType> ALLOWED_ATTACHMENT_CONTENT_TYPES = List.of(MimeTypeUtils.IMAGE_JPEG, MimeTypeUtils.IMAGE_PNG, MimeTypeUtils.IMAGE_GIF);
+    private final static Long MAX_ATTACHMENT_SIZE_IN_BYTES = 10024000L;
+    private final static Long ISSUE_MAX_ATTACHMENT_COUNT = 5L;
+    private final static Long ACTIVITY_MAX_ATTACHMENT_COUNT = 2L;
+    private final List<String> ALLOWED_ATTACHMENT_CONTENT_TYPES = Arrays.stream(AttachmentType.values()).map(AttachmentType::getTypes).flatMap(Collection::stream).toList();
 
     @Transactional
-    public Attachment uploadAttachment(Long issueId, MultipartFile file) {
-        checkAttachmentRequirements(issueId, file);
+    public IssueAttachment uploadIssueAttachment(Long issueId, Long projectId, MultipartFile file) {
+        checkAttachmentRequirements(file);
+        checkIssueAttachmentRequirements(issueId);
 
-        Issue issue = issueService.getIssueById(issueId);
+        Issue issue = issueService.getIssueById(issueId, projectId);
 
-        Attachment attachment = Attachment.builder()
+        IssueAttachment attachment = IssueAttachment.builder()
                 .issue(issue)
-                .attachmentType(file.getContentType())
+                .attachmentType(AttachmentType.findAttachmentTypeByContentType(file.getContentType()))
                 .build();
 
-        attachment.setAuditableFields(userContext);
+        attachment = upsertAttachment(attachment);
 
-        attachment = attachmentRepository.save(attachment);
-
-        String attachmentObjectName = nameGeneratorService.getIssueAttachmentObjectName(issueId, attachment.getId());
+        String attachmentObjectName = nameGeneratorService.getAttachmentObjectName(attachment.getId());
         bucketService.putObject(attachmentObjectName, file);
 
         return attachment;
     }
 
-    public List<Attachment> getAttachmentsOfIssue(Long issueId) {
-        Issue issue = issueService.getIssueById(issueId);
+    @Transactional
+    public ActivityAttachment uploadActivityAttachment(Long activityId, Long issueId, Long projectId, MultipartFile file) {
+        checkAttachmentRequirements(file);
+        checkActivityAttachmentRequirements(activityId);
+        issueService.checkIssueExists(issueId, projectId);
 
+        Activity activity = activityService.getActivityById(activityId, issueId, projectId);
+
+        ActivityAttachment attachment = ActivityAttachment.builder()
+                .activity(activity)
+                .attachmentType(AttachmentType.findAttachmentTypeByContentType(file.getContentType()))
+                .build();
+
+        attachment = upsertAttachment(attachment);
+
+        String attachmentObjectName = nameGeneratorService.getAttachmentObjectName(attachment.getId());
+        bucketService.putObject(attachmentObjectName, file);
+
+        return attachment;
+    }
+
+    public <T extends Attachment> T upsertAttachment(T attachment) {
+        // Set auditable fields.
+        attachment.setAuditableFields(userContext);
+        return attachmentRepository.save(attachment);
+    }
+
+    public Set<IssueAttachment> getAttachmentsOfIssue(Long issueId, Long projectId) {
+        Issue issue = issueService.getIssueById(issueId, projectId);
         return issue.getAttachments();
+    }
+
+    public Set<ActivityAttachment> getAttachmentsOfActivity(Long activityId, Long issueId, Long projectId) {
+        issueService.checkIssueExists(issueId, projectId);
+        Activity activity = activityService.getActivityById(activityId, issueId, projectId);
+        return activity.getAttachments();
     }
 
     public List<Byte> getAttachmentContent(Long attachmentId) {
         Attachment attachment = getAttachmentById(attachmentId);
-
-        String attachmentObjectName = nameGeneratorService.getIssueAttachmentObjectName(attachment.getIssue().getId(), attachment.getId());
-
+        String attachmentObjectName = nameGeneratorService.getAttachmentObjectName(attachment.getId());
         return bucketService.downloadObject(attachmentObjectName);
     }
 
@@ -75,7 +106,7 @@ public class AttachmentService {
         return attachment.get();
     }
 
-    private void checkAttachmentRequirements(Long issueId, MultipartFile file) {
+    private void checkAttachmentRequirements(MultipartFile file) {
         if (file.getSize() > MAX_ATTACHMENT_SIZE_IN_BYTES) {
             throw new WrongUsageException(I18nExceptionKeys.MAX_ATTACHMENT_SIZE_EXCEEDED, String.format("max size =%d bytes, uploaded attachment size =%d", MAX_ATTACHMENT_SIZE_IN_BYTES, file.getSize()));
         }
@@ -84,15 +115,22 @@ public class AttachmentService {
             throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_IS_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES.toString()));
         }
 
-
-        MimeType attachmentContentType = MimeTypeUtils.parseMimeType(file.getContentType());
-        if (!ALLOWED_ATTACHMENT_CONTENT_TYPES.contains(attachmentContentType)) {
+        if (!ALLOWED_ATTACHMENT_CONTENT_TYPES.contains(file.getContentType())) {
             throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_IS_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES));
         }
+    }
 
-        Long countOfAttachments = attachmentRepository.getCountByIssueId(issueId);
-        if (countOfAttachments.compareTo(MAX_ATTACHMENT_COUNT) > 0) {
-            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_AN_ISSUE, String.format("max count= %d, current count= %d", MAX_ATTACHMENT_COUNT, countOfAttachments));
+    private void checkIssueAttachmentRequirements(Long issueId) {
+        Long countOfAttachments = issueAttachmentRepository.getCountByIssueId(issueId);
+        if (countOfAttachments.compareTo(ISSUE_MAX_ATTACHMENT_COUNT) > 0) {
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_AN_ISSUE, String.format("max count= %d, current count= %d", ISSUE_MAX_ATTACHMENT_COUNT, countOfAttachments));
+        }
+    }
+
+    private void checkActivityAttachmentRequirements(Long activityId) {
+        Long countOfAttachments = activityAttachmentRepository.getCountByActivityId(activityId);
+        if (countOfAttachments.compareTo(ACTIVITY_MAX_ATTACHMENT_COUNT) > 0) {
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_AN_ISSUE, String.format("max count= %d, current count= %d", ACTIVITY_MAX_ATTACHMENT_COUNT, countOfAttachments));
         }
     }
 

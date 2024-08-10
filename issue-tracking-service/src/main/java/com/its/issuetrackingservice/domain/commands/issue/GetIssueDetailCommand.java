@@ -38,7 +38,7 @@ public class GetIssueDetailCommand extends Command<IssueDetailResponse> {
     public IssueDetailResponse execute() {
         userContext.applyAccessToProject(projectId);
 
-        this.issue = issueService.getIssueById(issueId);
+        this.issue = issueService.getIssueById(issueId, projectId);
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
         }

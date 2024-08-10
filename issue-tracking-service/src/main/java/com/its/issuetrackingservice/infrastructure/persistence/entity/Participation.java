@@ -8,8 +8,8 @@ import lombok.*;
 @Table(name = "participation")
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @ToString
 public class Participation extends AuditableEntity {

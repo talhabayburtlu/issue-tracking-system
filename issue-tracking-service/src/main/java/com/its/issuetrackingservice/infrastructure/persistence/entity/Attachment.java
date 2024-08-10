@@ -3,14 +3,16 @@ package com.its.issuetrackingservice.infrastructure.persistence.entity;
 import com.its.issuetrackingservice.domain.enums.AttachmentType;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity()
 @Table(name = "attachment")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @ToString
 public class Attachment extends AuditableEntity {
 

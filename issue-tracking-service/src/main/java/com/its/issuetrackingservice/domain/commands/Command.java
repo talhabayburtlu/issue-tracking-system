@@ -16,7 +16,7 @@ public abstract class Command<R> {
         return getClass().getSimpleName();
     }
 
-    public abstract R execute();
+    protected abstract R execute();
 
     public abstract Optional<R> getResult();
 }

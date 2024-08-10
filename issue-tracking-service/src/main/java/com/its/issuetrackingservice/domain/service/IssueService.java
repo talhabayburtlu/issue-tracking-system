@@ -34,6 +34,7 @@ public class IssueService {
     public Issue createDraftIssue(IssueRequest issueRequest, Long projectId) {
         Issue issue = issueMapper.toEntity(issueRequest);
         issue.setSpentTime(0L);
+        issue.setProject(projectService.getProjectById(projectId));
 
         // Configure participants
         Set<Participation> participationSet = participantService.buildParticipants(issueRequest, issue, Boolean.FALSE);
@@ -50,8 +51,7 @@ public class IssueService {
         return upsertIssue(issue);
     }
 
-    public Issue updateIssue(IssueRequest issueRequest, Long issueId) {
-        Issue issue = getIssueById(issueId);
+    public Issue updateIssue(IssueRequest issueRequest, Issue issue) {
         Issue newIssue = issueMapper.patchEntity(issueRequest, issue);
 
         // Configure participants
@@ -70,7 +70,6 @@ public class IssueService {
     public Issue upsertIssue(Issue issue) {
         // Set auditable fields.
         issue.setAuditableFields(userContext);
-
         return issueRepository.save(issue);
     }
 
@@ -100,8 +99,8 @@ public class IssueService {
         return issueRepository.getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(projectId);
     }
 
-    public Issue getIssueById(Long issueId) {
-        Optional<Issue> optionalIssue = issueRepository.findById(issueId);
+    public Issue getIssueById(Long issueId, Long projectId) {
+        Optional<Issue> optionalIssue = issueRepository.getIssueByIdAndProjectId(issueId, projectId);
         if (optionalIssue.isEmpty()) {
             throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
         }
@@ -109,6 +108,13 @@ public class IssueService {
         Issue issue = optionalIssue.get();
         userContext.applyAccessToProject(issue.getProject().getId());
         return issue;
+    }
+
+    public void checkIssueExists(Long issueId, Long projectId) {
+        Optional<Issue> optionalIssue = issueRepository.getIssueByIdAndProjectId(issueId, projectId);
+        if (optionalIssue.isEmpty()) {
+            throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
+        }
     }
 
     public void validateAccessToProject(Long projectId) {

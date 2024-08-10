@@ -1,5 +1,6 @@
 package com.its.issuetrackingservice.infrastructure.persistence.entity;
 
+import com.its.issuetrackingservice.domain.enums.ActivityType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -22,9 +23,14 @@ public class Activity extends AuditableEntity {
     @Column(name = "id", precision = 18)
     private Long id;
 
+    @Lob
     @NotBlank
-    @Column(name = "description", length = 256, nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
+
+    @Column(name = "type", length = 64, nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ActivityType activityType;
 
     @ManyToOne
     @JoinColumn(name = "issue_id", nullable = false)
@@ -36,5 +42,8 @@ public class Activity extends AuditableEntity {
 
     @OneToMany(mappedBy = "activity")
     private Set<ActivityItem> activityItems;
+
+    @OneToMany(mappedBy = "activity")
+    private Set<ActivityAttachment> attachments;
 
 }

@@ -18,5 +18,6 @@ public class AttachmentResponse extends AuditableEntityDto {
 
 	private String attachmentType;
 	private Long issueId;
+	private Long activityItemId;
 	private List<Byte> content;
 }

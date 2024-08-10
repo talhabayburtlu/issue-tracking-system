@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity()
@@ -32,7 +31,7 @@ public class Issue extends AuditableEntity {
 	private String code;
 
 	@Lob
-	@Column(name = "description")
+	@Column(name = "description" , length = 1024)
 	private String description;
 
 	@Column(name = "estimation", nullable = false)
@@ -45,11 +44,11 @@ public class Issue extends AuditableEntity {
 	private Boolean isDraft;
 
 	@ManyToOne
-	@Column(name = "category")
+	@Column(name = "category" , nullable = false)
 	private Category category;
 
 	@ManyToOne
-	@JoinColumn(name = "state_id")
+	@JoinColumn(name = "state_id", nullable = false)
 	private State state;
 
 	@ManyToOne
@@ -67,8 +66,5 @@ public class Issue extends AuditableEntity {
 	private Set<Participation> participants;
 
 	@OneToMany(mappedBy = "issue")
-	private List<IssueSubsystem> subsystems;
-
-	@OneToMany(mappedBy = "issue")
-	private List<IssueAttachment> attachments;
+	private Set<IssueAttachment> attachments;
 }

@@ -27,6 +27,7 @@ public class UserContext {
     }
 
     public void applyAccessToProject(Long projectId) {
+        // TODO: Make another method for this check with issueId parameter
         if (!haveAccessToProject(projectId)) {
             throw new AccessException(I18nExceptionKeys.USER_DOES_NOT_ACCESS_TO_PROJECT, String.format("project id=%d", projectId));
         }
