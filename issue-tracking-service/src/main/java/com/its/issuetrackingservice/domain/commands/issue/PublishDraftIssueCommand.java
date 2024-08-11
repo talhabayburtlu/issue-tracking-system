@@ -15,6 +15,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.Arrays;
@@ -24,9 +25,9 @@ import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
-    private Long projectId;
     private Long issueId;
     private IssueRequest issueRequest;
     private Boolean sendNotification;
@@ -50,7 +51,7 @@ public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
 
     @Override
     public IssueDetailResponse execute() {
-        issueService.validateAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
         // Update issue
         UpdateIssueCommand updateIssueCommand = buildUpdateIssueCommand();
@@ -81,7 +82,6 @@ public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
         return UpdateIssueCommand.builder()
                 .issueRequest(issueRequest)
                 .issueId(issueId)
-                .projectId(projectId)
                 .returnResultAfterExecution(Boolean.FALSE)
                 .build();
     }

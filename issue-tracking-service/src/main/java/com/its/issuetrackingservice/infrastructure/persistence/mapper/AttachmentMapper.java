@@ -26,8 +26,8 @@ public abstract class AttachmentMapper {
     @Mapping(source = "issue.id", target = "issueId")
     public abstract IssueAttachmentSummaryResponse toIssueAttachmentSummaryResponse(IssueAttachment attachment);
 
-    @Mapping(source = "activityItem.id", target = "activityItemId")
-    public abstract ActivityAttachmentSummaryResponse toActivityItemAttachmentSummaryResponse(ActivityAttachment attachment);
+    @Mapping(source = "activity.id", target = "activityId")
+    public abstract ActivityAttachmentSummaryResponse toActivityAttachmentSummaryResponse(ActivityAttachment attachment);
 
     @Mapping(target = "content", source = "attachment",qualifiedByName = "setAttachmentContent")
     public abstract AttachmentResponse toResponse(Attachment attachment);
@@ -36,9 +36,9 @@ public abstract class AttachmentMapper {
     @Mapping(target = "qualified", qualifiedByName = "setAttachmentContent")
     public abstract List<AttachmentResponse> toIssueAttachmentListResponse(Set<IssueAttachment> attachmentList);
 
-    @Mapping(source = "activityItemId.id", target = "activityItemId")
+    @Mapping(source = "activity.id", target = "activityId")
     @Mapping(target = "qualified", qualifiedByName = "setAttachmentContent")
-    public abstract List<AttachmentResponse> toActivityItemAttachmentListResponse(Set<ActivityAttachment> attachmentList);
+    public abstract List<AttachmentResponse> toActivityAttachmentListResponse(Set<ActivityAttachment> attachmentList);
 
     @Named("setAttachmentContent")
     public List<Byte> setAttachmentContent(Attachment attachment) {

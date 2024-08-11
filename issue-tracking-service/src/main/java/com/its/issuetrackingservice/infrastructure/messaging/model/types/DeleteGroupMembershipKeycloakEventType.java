@@ -1,14 +1,18 @@
 package com.its.issuetrackingservice.infrastructure.messaging.model.types;
 
 
+import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
+import com.its.issuetrackingservice.domain.exception.InternalServerException;
 import com.its.issuetrackingservice.infrastructure.messaging.enums.KeycloakEventType;
 import com.its.issuetrackingservice.infrastructure.messaging.model.AbstractKeycloakEvent;
 import com.its.issuetrackingservice.infrastructure.messaging.model.KeycloakEvent;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Membership;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class DeleteGroupMembershipKeycloakEventType extends AbstractKeycloakEvent {
@@ -30,7 +34,12 @@ public class DeleteGroupMembershipKeycloakEventType extends AbstractKeycloakEven
             return;
         }
 
-        user.getProjects().remove(project);
+        Optional<Membership> membershipOptional = user.getMemberships().stream().filter(membership -> membership.getProject().equals(project)).findFirst();
+        if (membershipOptional.isEmpty()) {
+            throw new InternalServerException(I18nExceptionKeys.KEYCLOAK_GROUP_MEMBERSHIP_NOT_FOUND);
+        }
+
+        user.getMemberships().remove(membershipOptional.get());
         getUserService().upsertUser(user, Boolean.TRUE);
     }
 }

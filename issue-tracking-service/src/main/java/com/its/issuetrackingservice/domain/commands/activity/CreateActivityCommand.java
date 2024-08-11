@@ -8,12 +8,14 @@ import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Optional;
 
 
 @SuperBuilder
+@AllArgsConstructor
 public class CreateActivityCommand extends Command<ActivityResponse> {
     // Inputs
     private ActivityRequest activityRequest;

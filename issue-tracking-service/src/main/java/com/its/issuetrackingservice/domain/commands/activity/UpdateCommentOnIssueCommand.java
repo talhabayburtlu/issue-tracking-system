@@ -9,17 +9,18 @@ import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Optional;
 
 
 @SuperBuilder
+@AllArgsConstructor
 public class UpdateCommentOnIssueCommand extends Command<ActivityResponse> {
     // Inputs
     private Long activityId;
     private Long issueId;
-    private Long projectId;
     private CommentRequest commentRequest;
 
     // Generates
@@ -39,9 +40,9 @@ public class UpdateCommentOnIssueCommand extends Command<ActivityResponse> {
 
     @Override
     public ActivityResponse execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.activity = activityService.getActivityById(activityId, issueId, projectId);
+        this.activity = activityService.getActivityById(activityId, issueId);
         this.activity = activityMapper.patchComment(commentRequest, this.activity);
         this.activity = activityService.upsertActivity(activity);
 

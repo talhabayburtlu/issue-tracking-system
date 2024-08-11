@@ -4,14 +4,12 @@ package com.its.issuetrackingservice.infrastructure.messaging.model.types;
 import com.its.issuetrackingservice.infrastructure.messaging.enums.KeycloakEventType;
 import com.its.issuetrackingservice.infrastructure.messaging.model.AbstractKeycloakEvent;
 import com.its.issuetrackingservice.infrastructure.messaging.model.KeycloakEvent;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Membership;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class CreateUserKeycloakEventType extends AbstractKeycloakEvent {
@@ -34,13 +32,24 @@ public class CreateUserKeycloakEventType extends AbstractKeycloakEvent {
                     .build();
         }
 
-        String keycloakId = getResourcePathToken(keycloakEvent,1);
+        String keycloakId = getResourcePathToken(keycloakEvent, 1);
         user.setKeycloakId(keycloakId);
         user.setIsActive(Boolean.TRUE);
 
+        @SuppressWarnings("unchecked")
         List<String> projectNames = ((List<String>) userMap.get("groups")).stream().map(group -> group.substring(1)).toList();
         Set<Project> addedProjects = getProjectService().getProjectsByNames(projectNames);
-        user.setProjects(addedProjects);
+        Set<Membership> memberships = new HashSet<>();
+
+        for (Project project : addedProjects) {
+            memberships.add(Membership.builder()
+                    .project(project)
+                    .user(user)
+                    .build()
+            );
+        }
+
+        user.setMemberships(memberships);
 
         getUserService().upsertUser(user, Boolean.TRUE);
     }

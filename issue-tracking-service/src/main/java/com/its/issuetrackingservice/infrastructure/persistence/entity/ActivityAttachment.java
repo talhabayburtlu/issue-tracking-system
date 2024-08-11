@@ -20,7 +20,7 @@ public class ActivityAttachment extends Attachment {
     private Long id;
 
     @ManyToOne
-    @Column(name = "activity_id", nullable = false)
+    @JoinColumn(name = "activity_id", nullable = false)
     private Activity activity;
 
 }

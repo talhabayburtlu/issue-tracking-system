@@ -15,6 +15,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
@@ -26,9 +27,9 @@ import java.util.Optional;
 
 @Getter
 @SuperBuilder
+@AllArgsConstructor
 public class UpdateIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
-    private Long projectId;
     private Long issueId;
     private IssueRequest issueRequest;
     private Boolean sendNotification = Boolean.TRUE;
@@ -53,9 +54,9 @@ public class UpdateIssueCommand extends Command<IssueDetailResponse> {
 
     @Override
     public IssueDetailResponse execute() {
-        issueService.validateAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        oldIssue = issueService.getIssueById(issueId, projectId);
+        oldIssue = issueService.getIssueById(issueId);
         newIssue = issueService.updateIssue(issueRequest, oldIssue);
 
         CreateActivityCommand createActivityCommand = buildCreateActivityCommand();

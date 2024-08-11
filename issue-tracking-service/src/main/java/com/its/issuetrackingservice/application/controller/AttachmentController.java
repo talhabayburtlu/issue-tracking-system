@@ -27,49 +27,40 @@ public class AttachmentController {
 
     private final Invoker invoker;
 
-    @GetMapping(path = "/project/{project_id}/issue/{issue_id}")
-    public GenericRestResponse<List<AttachmentResponse>> getIssueAttachments(@PathVariable("project_id") Long projectId,
-                                                                             @PathVariable("issue_id") Long issueId) {
+    @GetMapping(path = "/issue/{issue_id}")
+    public GenericRestResponse<List<AttachmentResponse>> getIssueAttachments(@PathVariable("issue_id") Long issueId) {
         GetIssueAttachmentsCommand command = GetIssueAttachmentsCommand.builder()
                 .issueId(issueId)
-                .projectId(projectId)
                 .build();
         return GenericRestResponse.of(invoker.run(command));
     }
 
-    @GetMapping(path = "/project/{project_id}/issue/{issue_id}/activity_item/{activity_item_id}")
-    public GenericRestResponse<List<AttachmentResponse>> getActivityItemAttachments(@PathVariable("project_id") Long projectId,
-                                                                             @PathVariable("issue_id") Long issueId,
-                                                                             @PathVariable("activity_item_id") Long activityItemId) {
+    @GetMapping(path = "/issue/{issue_id}/activity/{activity_id}")
+    public GenericRestResponse<List<AttachmentResponse>> getActivityItemAttachments(@PathVariable("issue_id") Long issueId, @PathVariable("activity_id") Long activityId) {
         GetActivityAttachmentsCommand command = GetActivityAttachmentsCommand.builder()
-                .activityItemId(activityItemId)
+                .activityId(activityId)
                 .issueId(issueId)
-                .projectId(projectId)
                 .build();
         return GenericRestResponse.of(invoker.run(command));
     }
 
-    @PostMapping(path = "/project/{project_id}/issue/{issue_id}", consumes = {MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(path = "/issue/{issue_id}", consumes = {MULTIPART_FORM_DATA_VALUE})
     public GenericRestResponse<IssueAttachmentSummaryResponse> uploadIssueAttachment(@RequestParam("file") MultipartFile file,
-                                                                                     @PathVariable("project_id") Long projectId,
                                                                                      @PathVariable("issue_id") Long issueId) {
         UploadIssueAttachmentCommand command = UploadIssueAttachmentCommand.builder()
                 .issueId(issueId)
-                .projectId(projectId)
                 .file(file)
                 .build();
         return GenericRestResponse.of(invoker.run(command));
     }
 
-    @PostMapping(path = "/project/{project_id}/issue/{issue_id}/activity_item/{activity_item_id}", consumes = {MULTIPART_FORM_DATA_VALUE})
-    public GenericRestResponse<ActivityAttachmentSummaryResponse> uploadActivityItemAttachment(@RequestParam("file") MultipartFile file,
-                                                                                               @PathVariable("project_id") Long projectId,
-                                                                                               @PathVariable("issue_id") Long issueId,
-                                                                                               @PathVariable("activity_item_id") Long activityItemId) {
+    @PostMapping(path = "/issue/{issue_id}/activity/{activity_id}", consumes = {MULTIPART_FORM_DATA_VALUE})
+    public GenericRestResponse<ActivityAttachmentSummaryResponse> uploadActivityAttachment(@RequestParam("file") MultipartFile file,
+                                                                                           @PathVariable("issue_id") Long issueId,
+                                                                                           @PathVariable("activity_id") Long activityId) {
         UploadActivityAttachmentCommand command = UploadActivityAttachmentCommand.builder()
-                .activityId(activityItemId)
+                .activityId(activityId)
                 .issueId(issueId)
-                .projectId(projectId)
                 .file(file)
                 .build();
         return GenericRestResponse.of(invoker.run(command));

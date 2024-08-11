@@ -53,6 +53,7 @@ public class ProjectService {
         return project;
     }
 
+    // TODO: Cache this service
     public Set<Project> getProjectsOfUser(Long userId) {
         return projectRepository.getProjectsOfUser(userId);
     }

@@ -4,6 +4,7 @@ import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.AccessException;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
+import com.its.issuetrackingservice.infrastructure.persistence.repository.IssueRepository;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,6 +20,7 @@ import java.util.Set;
 public class UserContext {
     private User user;
     private Set<Project> projects;
+    private IssueRepository issueRepository;
 
     public void applyAccessToProject(Project project) {
         if (!haveAccessToProject(project)) {
@@ -26,8 +28,12 @@ public class UserContext {
         }
     }
 
+    public void applyAccessToProjectByIssueId(Long issueId) {
+        Long projectId = issueRepository.getProjectIdByIssueId(issueId);
+        applyAccessToProject(projectId);
+    }
+
     public void applyAccessToProject(Long projectId) {
-        // TODO: Make another method for this check with issueId parameter
         if (!haveAccessToProject(projectId)) {
             throw new AccessException(I18nExceptionKeys.USER_DOES_NOT_ACCESS_TO_PROJECT, String.format("project id=%d", projectId));
         }

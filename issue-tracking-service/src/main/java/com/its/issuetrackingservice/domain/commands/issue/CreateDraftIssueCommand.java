@@ -9,12 +9,14 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class CreateDraftIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;
@@ -38,7 +40,7 @@ public class CreateDraftIssueCommand extends Command<IssueDetailResponse> {
 
     @Override
     public IssueDetailResponse execute() {
-        issueService.validateAccessToProject(projectId);
+        userContext.applyAccessToProject(projectId);
 
         this.issue = issueService.createDraftIssue(issueRequest, projectId);
 

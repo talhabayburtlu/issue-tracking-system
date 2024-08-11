@@ -15,5 +15,5 @@ public class ActivityAttachmentSummaryResponse extends AuditableEntityDto {
 	@EqualsAndHashCode.Include
 	private Long id;
 	private String attachmentType;
-	private Long activityItemId;
+	private Long activityId;
 }

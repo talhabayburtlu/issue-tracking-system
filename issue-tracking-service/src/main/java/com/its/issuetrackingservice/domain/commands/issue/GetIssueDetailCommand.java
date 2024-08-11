@@ -8,15 +8,16 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class GetIssueDetailCommand extends Command<IssueDetailResponse> {
     // Inputs
-    private Long projectId;
     private Long issueId;
 
     // Generates
@@ -36,9 +37,9 @@ public class GetIssueDetailCommand extends Command<IssueDetailResponse> {
 
     @Override
     public IssueDetailResponse execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.issue = issueService.getIssueById(issueId, projectId);
+        this.issue = issueService.getIssueById(issueId);
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
         }

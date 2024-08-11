@@ -20,6 +20,6 @@ public class IssueAttachment extends Attachment {
 	private Long id;
 
 	@ManyToOne
-	@Column(name = "issue_id", nullable = false)
+	@JoinColumn(name = "issue_id", nullable = false)
 	private Issue issue;
 }

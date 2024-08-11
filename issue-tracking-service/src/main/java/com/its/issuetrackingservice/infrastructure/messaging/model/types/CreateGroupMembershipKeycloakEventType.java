@@ -4,6 +4,7 @@ package com.its.issuetrackingservice.infrastructure.messaging.model.types;
 import com.its.issuetrackingservice.infrastructure.messaging.enums.KeycloakEventType;
 import com.its.issuetrackingservice.infrastructure.messaging.model.AbstractKeycloakEvent;
 import com.its.issuetrackingservice.infrastructure.messaging.model.KeycloakEvent;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Membership;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,12 @@ public class CreateGroupMembershipKeycloakEventType extends AbstractKeycloakEven
             return;
         }
 
-        user.getProjects().add(project);
+        user.getMemberships().add(Membership.builder()
+                .project(project)
+                .user(user)
+                .build()
+        );
+
         getUserService().upsertUser(user, Boolean.TRUE);
     }
 }

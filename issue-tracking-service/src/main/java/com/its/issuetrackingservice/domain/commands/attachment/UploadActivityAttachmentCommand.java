@@ -12,6 +12,7 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.ActivityAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,11 +21,11 @@ import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class UploadActivityAttachmentCommand extends Command<ActivityAttachmentSummaryResponse> {
     // Inputs
     private Long activityId;
     private Long issueId;
-    private Long projectId;
     private MultipartFile file;
 
     // Generates
@@ -47,14 +48,14 @@ public class UploadActivityAttachmentCommand extends Command<ActivityAttachmentS
 
     @Override
     public ActivityAttachmentSummaryResponse execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        activity = activityService.getActivityById(activityId, issueId, projectId);
+        activity = activityService.getActivityById(activityId, issueId);
         if (!Objects.equals(activity.getCreatorUser().getId(), userContext.getUser().getId())) {
             throw new AccessException(I18nExceptionKeys.ONLY_COMMENT_CREATOR_CAN_UPLOAD_ATTACHMENTS);
         }
 
-        this.attachment = attachmentService.uploadActivityAttachment(activityId, issueId, projectId, file);
+        this.attachment = attachmentService.uploadActivityAttachment(activityId, issueId, file);
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
@@ -65,7 +66,7 @@ public class UploadActivityAttachmentCommand extends Command<ActivityAttachmentS
 
     @Override
     public Optional<ActivityAttachmentSummaryResponse> getResult() {
-        return Optional.ofNullable(attachmentMapper.toActivityItemAttachmentSummaryResponse(attachment));
+        return Optional.ofNullable(attachmentMapper.toActivityAttachmentSummaryResponse(attachment));
     }
 
 

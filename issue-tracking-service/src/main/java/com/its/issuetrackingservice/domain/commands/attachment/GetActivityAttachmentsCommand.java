@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentRespon
 import com.its.issuetrackingservice.infrastructure.persistence.entity.ActivityAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.List;
@@ -16,11 +17,12 @@ import java.util.Set;
 
 
 @Builder
+@AllArgsConstructor
 public class GetActivityAttachmentsCommand extends Command<List<AttachmentResponse>> {
+
     // Inputs
-    private Long activityItemId;
+    private Long activityId;
     private Long issueId;
-    private Long projectId;
 
     // Generates
     private Set<ActivityAttachment> attachments;
@@ -39,9 +41,9 @@ public class GetActivityAttachmentsCommand extends Command<List<AttachmentRespon
 
     @Override
     public List<AttachmentResponse> execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.attachments = attachmentService.getAttachmentsOfActivity(activityItemId, issueId, projectId);
+        this.attachments = attachmentService.getAttachmentsOfActivity(activityId, issueId);
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
@@ -52,7 +54,7 @@ public class GetActivityAttachmentsCommand extends Command<List<AttachmentRespon
 
     @Override
     public Optional<List<AttachmentResponse>> getResult() {
-        return Optional.ofNullable(attachmentMapper.toActivityItemAttachmentListResponse(attachments));
+        return Optional.ofNullable(attachmentMapper.toActivityAttachmentListResponse(attachments));
     }
 
 

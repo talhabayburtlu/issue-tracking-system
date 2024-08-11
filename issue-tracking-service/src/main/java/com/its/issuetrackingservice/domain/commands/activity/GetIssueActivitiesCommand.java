@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Pageable;
 
@@ -16,9 +17,9 @@ import java.util.Optional;
 
 
 @SuperBuilder
+@AllArgsConstructor
 public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
     // Inputs
-    private Long projectId;
     private Long issueId;
     private Pageable pageable;
 
@@ -39,7 +40,7 @@ public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
 
     @Override
     protected List<ActivityResponse> execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
         this.activities = activityService.getActivitiesByIssueId(issueId, pageable);
 

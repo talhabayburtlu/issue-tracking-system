@@ -17,4 +17,8 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
 
     Optional<Issue> getIssueByIdAndProjectId(Long issueId, Long projectId);
 
+    // TODO: Cache this call
+    @Query("SELECT i.project.id FROM Issue i WHERE i.id = :issueId")
+    Long getProjectIdByIssueId(Long issueId);
+
 }

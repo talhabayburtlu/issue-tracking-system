@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentRespon
 import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.List;
@@ -16,10 +17,10 @@ import java.util.Set;
 
 
 @Builder
+@AllArgsConstructor
 public class GetIssueAttachmentsCommand extends Command<List<AttachmentResponse>> {
     // Inputs
     private Long issueId;
-    private Long projectId;
 
     // Generates
     private Set<IssueAttachment> attachments;
@@ -38,9 +39,9 @@ public class GetIssueAttachmentsCommand extends Command<List<AttachmentResponse>
 
     @Override
     public List<AttachmentResponse> execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.attachments = attachmentService.getAttachmentsOfIssue(issueId, projectId);
+        this.attachments = attachmentService.getAttachmentsOfIssue(issueId);
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);

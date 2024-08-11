@@ -99,8 +99,8 @@ public class IssueService {
         return issueRepository.getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(projectId);
     }
 
-    public Issue getIssueById(Long issueId, Long projectId) {
-        Optional<Issue> optionalIssue = issueRepository.getIssueByIdAndProjectId(issueId, projectId);
+    public Issue getIssueById(Long issueId) {
+        Optional<Issue> optionalIssue = issueRepository.findById(issueId);
         if (optionalIssue.isEmpty()) {
             throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
         }
@@ -108,17 +108,6 @@ public class IssueService {
         Issue issue = optionalIssue.get();
         userContext.applyAccessToProject(issue.getProject().getId());
         return issue;
-    }
-
-    public void checkIssueExists(Long issueId, Long projectId) {
-        Optional<Issue> optionalIssue = issueRepository.getIssueByIdAndProjectId(issueId, projectId);
-        if (optionalIssue.isEmpty()) {
-            throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND, String.format("issue id=%d", issueId));
-        }
-    }
-
-    public void validateAccessToProject(Long projectId) {
-        userContext.applyAccessToProject(projectId);
     }
 
     private String generateIssueCode(Issue issue, Long projectId) {

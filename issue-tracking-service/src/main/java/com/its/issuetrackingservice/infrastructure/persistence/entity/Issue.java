@@ -44,7 +44,7 @@ public class Issue extends AuditableEntity {
 	private Boolean isDraft;
 
 	@ManyToOne
-	@Column(name = "category" , nullable = false)
+	@JoinColumn(name = "category", nullable = false)
 	private Category category;
 
 	@ManyToOne

@@ -10,8 +10,8 @@ import java.util.Optional;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
-    @Query("SELECT a FROM Activity a WHERE a.id = :id AND a.issue.id = :issueId AND a.issue.project.id = :projectId")
-    Optional<Activity> getByIdAndIssueIdAndProjectId(Long id, Long issueId, Long projectId);
+    @Query("SELECT a FROM Activity a WHERE a.id = :id AND a.issue.id = :issueId")
+    Optional<Activity> getByIdAndIssueId(Long id, Long issueId);
 
     List<Activity> getActivitiesByIssueId(Long issueId, Pageable pageable);
 }

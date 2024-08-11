@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueSummaryResp
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class GetSprintIssuesSummaryCommand extends Command<List<IssueSummaryResponse>> {
     // Inputs
     private Long projectId;

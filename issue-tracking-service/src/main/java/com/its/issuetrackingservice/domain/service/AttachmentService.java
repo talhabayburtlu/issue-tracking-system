@@ -34,11 +34,11 @@ public class AttachmentService {
     private final List<String> ALLOWED_ATTACHMENT_CONTENT_TYPES = Arrays.stream(AttachmentType.values()).map(AttachmentType::getTypes).flatMap(Collection::stream).toList();
 
     @Transactional
-    public IssueAttachment uploadIssueAttachment(Long issueId, Long projectId, MultipartFile file) {
+    public IssueAttachment uploadIssueAttachment(Long issueId, MultipartFile file) {
         checkAttachmentRequirements(file);
         checkIssueAttachmentRequirements(issueId);
 
-        Issue issue = issueService.getIssueById(issueId, projectId);
+        Issue issue = issueService.getIssueById(issueId);
 
         IssueAttachment attachment = IssueAttachment.builder()
                 .issue(issue)
@@ -54,12 +54,11 @@ public class AttachmentService {
     }
 
     @Transactional
-    public ActivityAttachment uploadActivityAttachment(Long activityId, Long issueId, Long projectId, MultipartFile file) {
+    public ActivityAttachment uploadActivityAttachment(Long activityId, Long issueId, MultipartFile file) {
         checkAttachmentRequirements(file);
         checkActivityAttachmentRequirements(activityId);
-        issueService.checkIssueExists(issueId, projectId);
 
-        Activity activity = activityService.getActivityById(activityId, issueId, projectId);
+        Activity activity = activityService.getActivityById(activityId, issueId);
 
         ActivityAttachment attachment = ActivityAttachment.builder()
                 .activity(activity)
@@ -80,14 +79,13 @@ public class AttachmentService {
         return attachmentRepository.save(attachment);
     }
 
-    public Set<IssueAttachment> getAttachmentsOfIssue(Long issueId, Long projectId) {
-        Issue issue = issueService.getIssueById(issueId, projectId);
+    public Set<IssueAttachment> getAttachmentsOfIssue(Long issueId) {
+        Issue issue = issueService.getIssueById(issueId);
         return issue.getAttachments();
     }
 
-    public Set<ActivityAttachment> getAttachmentsOfActivity(Long activityId, Long issueId, Long projectId) {
-        issueService.checkIssueExists(issueId, projectId);
-        Activity activity = activityService.getActivityById(activityId, issueId, projectId);
+    public Set<ActivityAttachment> getAttachmentsOfActivity(Long activityId, Long issueId) {
+        Activity activity = activityService.getActivityById(activityId, issueId);
         return activity.getAttachments();
     }
 

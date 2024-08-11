@@ -20,8 +20,8 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final UserContext userContext;
 
-    public Activity getActivityById(Long activityId, Long issueId, Long projectId) {
-        Optional<Activity> optionalActivityItem = activityRepository.getByIdAndIssueIdAndProjectId(activityId, issueId, projectId);
+    public Activity getActivityById(Long activityId, Long issueId) {
+        Optional<Activity> optionalActivityItem = activityRepository.getByIdAndIssueId(activityId, issueId);
         if (optionalActivityItem.isEmpty()) {
             throw new DataNotFoundException(I18nExceptionKeys.ACTIVITY_NOT_FOUND, String.format("activity id=%d", activityId));
         }

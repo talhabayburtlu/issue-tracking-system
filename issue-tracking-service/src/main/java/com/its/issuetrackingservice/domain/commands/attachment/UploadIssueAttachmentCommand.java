@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueAttachmentS
 import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,10 +16,10 @@ import java.util.Optional;
 
 
 @Builder
+@AllArgsConstructor
 public class UploadIssueAttachmentCommand extends Command<IssueAttachmentSummaryResponse> {
     // Inputs
     private Long issueId;
-    private Long projectId;
     private MultipartFile file;
 
     // Generates
@@ -38,9 +39,9 @@ public class UploadIssueAttachmentCommand extends Command<IssueAttachmentSummary
 
     @Override
     public IssueAttachmentSummaryResponse execute() {
-        userContext.applyAccessToProject(projectId);
+        userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.attachment = attachmentService.uploadIssueAttachment(issueId, projectId, file);
+        this.attachment = attachmentService.uploadIssueAttachment(issueId, file);
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
