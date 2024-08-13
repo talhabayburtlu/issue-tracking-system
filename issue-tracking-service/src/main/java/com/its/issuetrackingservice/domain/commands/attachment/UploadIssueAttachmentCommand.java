@@ -7,7 +7,6 @@ import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueAttachmentSummaryResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +29,7 @@ public class UploadIssueAttachmentCommand extends Command<IssueAttachmentSummary
     private AttachmentMapper attachmentMapper;
     private UserContext userContext;
 
-    @PostConstruct
+    @Override
     public void init() {
         this.attachmentService = SpringContext.getBean(AttachmentService.class);
         this.attachmentMapper = SpringContext.getBean(AttachmentMapper.class);

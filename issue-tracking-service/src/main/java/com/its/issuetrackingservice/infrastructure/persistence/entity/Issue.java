@@ -52,7 +52,7 @@ public class Issue extends AuditableEntity {
 	private State state;
 
 	@ManyToOne
-	@JoinColumn(name = "sprint_id", nullable = false)
+	@JoinColumn(name = "sprint_id")
 	private Sprint sprint;
 
 	@ManyToOne

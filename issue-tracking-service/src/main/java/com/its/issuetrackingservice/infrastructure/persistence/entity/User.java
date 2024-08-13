@@ -43,6 +43,6 @@ public class User extends AuditableEntity {
     private Boolean isActive;
 
     @Lazy
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<Membership> memberships;
 }

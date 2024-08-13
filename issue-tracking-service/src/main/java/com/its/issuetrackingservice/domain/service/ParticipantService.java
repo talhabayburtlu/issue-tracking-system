@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,9 @@ public class ParticipantService {
 
     public Set<Long> getParticipantIdsToRemove(IssueRequest issueRequest) {
         Set<Long> ids = new HashSet<>();
+        if (Objects.isNull(issueRequest.getParticipantsRequest())) {
+            return Set.of();
+        }
         ids.addAll(issueRequest.getParticipantsRequest().getAssignees().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
         ids.addAll(issueRequest.getParticipantsRequest().getVerifiers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
         ids.addAll(issueRequest.getParticipantsRequest().getReviewers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
@@ -40,6 +44,11 @@ public class ParticipantService {
         Set<Participation> participationSet = new HashSet<>();
         User creatorUser = userContext.getUser();
         participationSet.add(buildParticipation(creatorUser, issue, ParticipationType.CREATOR));
+
+        if (Objects.isNull(issueRequest.getParticipantsRequest())) {
+            return participationSet;
+        }
+
         issueRequest.getParticipantsRequest().getAssignees().forEach(assignee -> participationSet.add(buildParticipation(assignee, issue, ParticipationType.ASSIGNEE, includeIDs)));
         issueRequest.getParticipantsRequest().getVerifiers().forEach(verifier -> participationSet.add(buildParticipation(verifier, issue, ParticipationType.VERIFIER, includeIDs)));
         issueRequest.getParticipantsRequest().getReviewers().forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.REVIEWER, includeIDs)));

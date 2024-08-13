@@ -7,7 +7,6 @@ import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -30,7 +29,7 @@ public class GetSprintIssuesSummaryCommand extends Command<List<IssueSummaryResp
     private IssueMapper issueMapper;
     private UserContext userContext;
 
-    @PostConstruct
+    @Override
     public void init() {
         this.issueService = SpringContext.getBean(IssueService.class);
         this.issueMapper = SpringContext.getBean(IssueMapper.class);

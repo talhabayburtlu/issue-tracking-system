@@ -7,7 +7,6 @@ import com.its.issuetrackingservice.infrastructure.dto.request.ActivityRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -28,7 +27,7 @@ public class CreateActivityCommand extends Command<ActivityResponse> {
     private ActivityService activityService;
     private ActivityMapper activityMapper;
 
-    @PostConstruct
+    @Override
     public void init() {
         this.activityService = SpringContext.getBean(ActivityService.class);
         this.activityMapper = SpringContext.getBean(ActivityMapper.class);

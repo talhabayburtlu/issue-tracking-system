@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity()
-@Table(name = "membership")
+@Table(name = "membership_role")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +15,8 @@ import lombok.*;
 public class MembershipRole extends AuditableEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "membership_sequence")
-	@SequenceGenerator(name = "membership_sequence", sequenceName = "membership_sequence", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "membership_role_sequence")
+	@SequenceGenerator(name = "membership_role_sequence", sequenceName = "membership_role_sequence", allocationSize = 1)
 	@Column(name = "id", precision = 18)
 	private Long id;
 

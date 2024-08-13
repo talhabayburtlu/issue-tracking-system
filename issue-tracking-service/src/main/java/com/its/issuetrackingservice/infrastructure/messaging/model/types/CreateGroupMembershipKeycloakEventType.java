@@ -31,11 +31,12 @@ public class CreateGroupMembershipKeycloakEventType extends AbstractKeycloakEven
             return;
         }
 
-        user.getMemberships().add(Membership.builder()
+        Membership membership =Membership.builder()
                 .project(project)
                 .user(user)
-                .build()
-        );
+                .build();
+        membership.setAuditableFields(null);
+        user.getMemberships().add(membership);
 
         getUserService().upsertUser(user, Boolean.TRUE);
     }

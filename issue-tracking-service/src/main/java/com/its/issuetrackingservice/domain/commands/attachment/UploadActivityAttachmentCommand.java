@@ -11,7 +11,6 @@ import com.its.issuetrackingservice.infrastructure.dto.response.ActivityAttachme
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.ActivityAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +38,7 @@ public class UploadActivityAttachmentCommand extends Command<ActivityAttachmentS
     private AttachmentMapper attachmentMapper;
     private UserContext userContext;
 
-    @PostConstruct
+    @Override
     public void init() {
         this.attachmentService = SpringContext.getBean(AttachmentService.class);
         this.attachmentMapper = SpringContext.getBean(AttachmentMapper.class);

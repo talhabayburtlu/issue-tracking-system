@@ -53,11 +53,6 @@ public class ProjectService {
         return project;
     }
 
-    // TODO: Cache this service
-    public Set<Project> getProjectsOfUser(Long userId) {
-        return projectRepository.getProjectsOfUser(userId);
-    }
-
     public Project upsertProject(Project project, boolean isSystemUser) {
         project.setAuditableFields(!isSystemUser ? userContext : null);
         return projectRepository.save(project);

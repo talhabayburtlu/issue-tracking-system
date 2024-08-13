@@ -15,6 +15,6 @@ public class ParticipantRequest implements Serializable {
     private Long id;
     private Long userId;
     private boolean isWatching;
-    private boolean isDelete;
+    private boolean isDelete = false;
 
 }

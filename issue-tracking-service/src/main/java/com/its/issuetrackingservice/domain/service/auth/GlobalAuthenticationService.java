@@ -1,6 +1,6 @@
 package com.its.issuetrackingservice.domain.service.auth;
 
-import com.its.issuetrackingservice.domain.service.ProjectService;
+import com.its.issuetrackingservice.domain.service.MembershipService;
 import com.its.issuetrackingservice.domain.service.UserService;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
@@ -15,15 +15,17 @@ import java.util.Set;
 public class GlobalAuthenticationService {
 
     private final UserService userService;
-    private final ProjectService projectService;
+    private final MembershipService membershipService;
 
     public UserContext generateUserContext(String keycloakId) {
         User user = userService.getUserByKeycloakId(keycloakId, true);
-        Set<Project> projects = projectService.getProjectsOfUser(user.getId());
+        Set<Project> projects = membershipService.getProjectsOfMember(user.getId());
 
-        return UserContext.builder()
+        UserContext userContext = UserContext.builder()
                 .user(user)
                 .projects(projects)
                 .build();
+        userContext.init();
+        return userContext;
     }
 }

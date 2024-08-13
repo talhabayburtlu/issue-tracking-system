@@ -14,7 +14,6 @@ import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -44,7 +43,7 @@ public class UpdateIssueCommand extends Command<IssueDetailResponse> {
     private UserContext userContext;
     private Invoker invoker;
 
-    @PostConstruct
+    @Override
     public void init() {
         this.issueService = SpringContext.getBean(IssueService.class);
         this.issueMapper = SpringContext.getBean(IssueMapper.class);

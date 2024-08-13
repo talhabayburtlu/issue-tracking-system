@@ -20,6 +20,8 @@ public abstract class Command<R> {
         return getClass().getSimpleName();
     }
 
+    protected abstract void init();
+
     protected abstract R execute();
 
     public abstract Optional<R> getResult();

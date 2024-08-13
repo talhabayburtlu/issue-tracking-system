@@ -42,11 +42,12 @@ public class CreateUserKeycloakEventType extends AbstractKeycloakEvent {
         Set<Membership> memberships = new HashSet<>();
 
         for (Project project : addedProjects) {
-            memberships.add(Membership.builder()
+            Membership membership =Membership.builder()
                     .project(project)
                     .user(user)
-                    .build()
-            );
+                    .build();
+            membership.setAuditableFields(null);
+            memberships.add(membership);
         }
 
         user.setMemberships(memberships);

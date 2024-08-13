@@ -2,6 +2,7 @@ package com.its.issuetrackingservice.infrastructure.dto;
 
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.AccessException;
+import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import com.its.issuetrackingservice.infrastructure.persistence.repository.IssueRepository;
@@ -22,9 +23,9 @@ public class UserContext {
     private Set<Project> projects;
     private IssueRepository issueRepository;
 
-    public void applyAccessToProject(Project project) {
-        if (!haveAccessToProject(project)) {
-            throw new AccessException(I18nExceptionKeys.USER_DOES_NOT_ACCESS_TO_PROJECT, String.format("project id=%d", project.getId()));
+    public void init() {
+        if (Objects.isNull(issueRepository)) {
+            issueRepository = SpringContext.getBean(IssueRepository.class);
         }
     }
 

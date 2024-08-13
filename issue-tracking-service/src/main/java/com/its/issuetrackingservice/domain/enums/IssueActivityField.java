@@ -27,7 +27,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getTitle(), newIssue.getTitle())) {
             return List.of(buildActivityItemRequest("title", Objects.nonNull(oldIssue) ? oldIssue.getTitle() : null, newIssue.getTitle(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForDescription(Issue oldIssue, Issue newIssue) {
@@ -35,7 +35,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getDescription(), newIssue.getDescription())) {
             return List.of(buildActivityItemRequest("description", Objects.nonNull(oldIssue) ? oldIssue.getDescription() : null, newIssue.getDescription(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForEstimation(Issue oldIssue, Issue newIssue) {
@@ -43,7 +43,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getEstimation(), newIssue.getEstimation())) {
             return List.of(buildActivityItemRequest("estimation", Objects.nonNull(oldIssue) ? oldIssue.getEstimation().toString() : null, newIssue.getEstimation().toString(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForCategory(Issue oldIssue, Issue newIssue) {
@@ -51,7 +51,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getCategory(), newIssue.getCategory())) {
             return List.of(buildActivityItemRequest("category", Objects.nonNull(oldIssue) ? oldIssue.getCategory().getName() : null, newIssue.getCategory().getName(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForState(Issue oldIssue, Issue newIssue) {
@@ -59,7 +59,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getState(), newIssue.getState())) {
             return List.of(buildActivityItemRequest("state", Objects.nonNull(oldIssue) ? oldIssue.getState().getTitle() : null, newIssue.getState().getTitle(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForSprint(Issue oldIssue, Issue newIssue) {
@@ -67,7 +67,7 @@ public enum IssueActivityField {
         if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getSprint(), newIssue.getSprint())) {
             return List.of(buildActivityItemRequest("sprint", Objects.nonNull(oldIssue) ? oldIssue.getSprint().getName() : null, newIssue.getSprint().getName(), activityItemType));
         }
-        return null;
+        return List.of();
     }
 
     private static List<ActivityItemRequest> generateForParticipants(Issue oldIssue, Issue newIssue) {

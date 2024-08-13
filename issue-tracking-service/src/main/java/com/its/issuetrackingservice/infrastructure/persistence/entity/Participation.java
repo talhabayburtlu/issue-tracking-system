@@ -32,6 +32,6 @@ public class Participation extends AuditableEntity {
     @JoinColumn(name = "issue_id", nullable = false)
     private Issue issue;
 
-    @Column(name = "isWatching", nullable = false, columnDefinition = "true")
+    @Column(name = "is_watching", nullable = false, columnDefinition = "boolean default false")
     private Boolean isWatching;
 }

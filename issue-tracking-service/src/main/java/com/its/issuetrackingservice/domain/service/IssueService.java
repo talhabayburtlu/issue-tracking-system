@@ -51,20 +51,22 @@ public class IssueService {
         return upsertIssue(issue);
     }
 
-    public Issue updateIssue(IssueRequest issueRequest, Issue issue) {
-        Issue newIssue = issueMapper.patchEntity(issueRequest, issue);
+    public Issue updateIssue(IssueRequest issueRequest, Issue oldIssue) {
+        Issue newIssue = issueMapper.patchEntity(issueRequest, oldIssue);
 
         // Configure participants
         Set<Long> participationIdsToRemove = participantService.getParticipantIdsToRemove(issueRequest);
         participantService.deleteParticipants(participationIdsToRemove);
 
         Set<Participation> participationSet = participantService.buildParticipants(issueRequest, newIssue, Boolean.TRUE);
-        issue.setParticipants(participationSet);
+        newIssue.setParticipants(participationSet);
 
         // Check state transition
-        stateService.checkStateTransitionAllowed(issue.getState(), newIssue.getState());
+        if (!Objects.equals(oldIssue.getState(), newIssue.getState())) {
+            stateService.checkStateTransitionAllowed(oldIssue.getState(), newIssue.getState());
+        }
 
-        return upsertIssue(issue);
+        return upsertIssue(newIssue);
     }
 
     public Issue upsertIssue(Issue issue) {
