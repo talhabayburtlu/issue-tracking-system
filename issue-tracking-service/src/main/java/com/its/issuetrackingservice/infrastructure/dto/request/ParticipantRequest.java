@@ -1,5 +1,6 @@
 package com.its.issuetrackingservice.infrastructure.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,6 +16,7 @@ public class ParticipantRequest implements Serializable {
     private Long id;
     private Long userId;
     private boolean isWatching;
+    @JsonProperty
     private boolean isDelete = false;
 
 }

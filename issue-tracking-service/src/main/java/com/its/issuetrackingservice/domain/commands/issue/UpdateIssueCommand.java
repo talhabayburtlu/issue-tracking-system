@@ -14,6 +14,8 @@ import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -31,7 +33,8 @@ public class UpdateIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long issueId;
     private IssueRequest issueRequest;
-    private Boolean sendNotification = Boolean.TRUE;
+    private Boolean sendNotification;
+    private Boolean createActivity;
 
     // Generates
     private Issue oldIssue;
@@ -42,6 +45,7 @@ public class UpdateIssueCommand extends Command<IssueDetailResponse> {
     private IssueMapper issueMapper;
     private UserContext userContext;
     private Invoker invoker;
+    private EntityManager entityManager;
 
     @Override
     public void init() {
@@ -49,17 +53,23 @@ public class UpdateIssueCommand extends Command<IssueDetailResponse> {
         this.issueMapper = SpringContext.getBean(IssueMapper.class);
         this.userContext = SpringContext.getBean(UserContext.class);
         this.invoker = SpringContext.getBean(Invoker.class);
+        this.entityManager = SpringContext.getBean(EntityManager.class);
     }
 
     @Override
+    @Transactional
     public IssueDetailResponse execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
         oldIssue = issueService.getIssueById(issueId);
+        entityManager.detach(oldIssue);
+
         newIssue = issueService.updateIssue(issueRequest, oldIssue);
 
-        CreateActivityCommand createActivityCommand = buildCreateActivityCommand();
-        invoker.run(createActivityCommand);
+        if (createActivity.equals(Boolean.TRUE) && oldIssue.getIsDraft().equals(Boolean.FALSE)) {
+            CreateActivityCommand createActivityCommand = buildCreateActivityCommand();
+            invoker.run(createActivityCommand);
+        }
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);

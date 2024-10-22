@@ -14,6 +14,7 @@ import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Builder
 @AllArgsConstructor
+@Transactional
 public class CreateDraftIssueCommand extends Command<IssueDetailResponse> {
     // Inputs
     private Long projectId;

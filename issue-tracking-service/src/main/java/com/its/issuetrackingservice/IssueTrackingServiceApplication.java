@@ -5,9 +5,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableDiscoveryClient
 @SpringBootApplication
+@EnableTransactionManagement
 @Configuration
 @PropertySource("classpath:application-bucket.properties")
 public class IssueTrackingServiceApplication {

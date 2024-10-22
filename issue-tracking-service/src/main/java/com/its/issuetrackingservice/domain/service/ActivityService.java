@@ -42,6 +42,11 @@ public class ActivityService {
 
     public Activity upsertActivity(Activity activity) {
         activity.setAuditableFields(userContext);
+        activity.getActivityItems().forEach(activityItem -> {
+            activityItem.setActivity(activity);
+            activityItem.setAuditableFields(userContext);
+        });
+
         return activityRepository.save(activity);
     }
 

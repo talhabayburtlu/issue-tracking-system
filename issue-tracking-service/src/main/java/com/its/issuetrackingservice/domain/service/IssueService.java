@@ -12,12 +12,15 @@ import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMappe
 import com.its.issuetrackingservice.infrastructure.persistence.repository.IssueRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,6 +38,7 @@ public class IssueService {
         Issue issue = issueMapper.toEntity(issueRequest);
         issue.setSpentTime(0L);
         issue.setProject(projectService.getProjectById(projectId));
+        issue.setIsDraft(Boolean.TRUE);
 
         // Configure participants
         Set<Participation> participationSet = participantService.buildParticipants(issueRequest, issue, Boolean.FALSE);
@@ -52,26 +56,30 @@ public class IssueService {
     }
 
     public Issue updateIssue(IssueRequest issueRequest, Issue oldIssue) {
-        Issue newIssue = issueMapper.patchEntity(issueRequest, oldIssue);
+        Issue newIssue = issueMapper.cloneEntity(oldIssue);
+        issueMapper.patchEntity(issueRequest, newIssue);
 
         // Configure participants
-        Set<Long> participationIdsToRemove = participantService.getParticipantIdsToRemove(issueRequest);
-        participantService.deleteParticipants(participationIdsToRemove);
-
-        Set<Participation> participationSet = participantService.buildParticipants(issueRequest, newIssue, Boolean.TRUE);
-        newIssue.setParticipants(participationSet);
+        Set<Participation> issueParticipants = newIssue.getParticipants();
+        Set<Long> participantsToRemove = participantService.getParticipantIdsToRemove(issueRequest);
+        issueParticipants = issueParticipants.stream().filter(participation -> !participantsToRemove.contains(participation.getId())).collect(Collectors.toSet());
+        issueParticipants.addAll(participantService.buildParticipants(issueRequest, newIssue, Boolean.TRUE));
+        newIssue.setParticipants(issueParticipants);
 
         // Check state transition
         if (!Objects.equals(oldIssue.getState(), newIssue.getState())) {
             stateService.checkStateTransitionAllowed(oldIssue.getState(), newIssue.getState());
         }
 
-        return upsertIssue(newIssue);
+        newIssue = upsertIssue(newIssue);
+        participantService.removeAllParticipants(participantsToRemove);
+        return newIssue;
     }
 
     public Issue upsertIssue(Issue issue) {
         // Set auditable fields.
         issue.setAuditableFields(userContext);
+        issueRepository.flush();
         return issueRepository.save(issue);
     }
 
@@ -80,7 +88,7 @@ public class IssueService {
             throw new DataNotFoundException(I18nExceptionKeys.ISSUE_NOT_FOUND);
         }
 
-        if (issue.getIsDraft()) {
+        if (Boolean.FALSE.equals(issue.getIsDraft())) {
             throw new WrongUsageException(I18nExceptionKeys.ALREADY_PUBLISHED_ISSUE_CAN_NOT_PUBLISHED);
         }
 
@@ -95,10 +103,10 @@ public class IssueService {
         return issueRepository.getAllByProjectIdAndSprintIdOrderByCreatedDateAsc(projectId, sprintId);
     }
 
-    public List<Issue> getBacklogIssues(Long projectId) {
+    public Page<Issue> getBacklogIssues(Long projectId, Pageable pageable) {
         projectService.checkProjectExists(projectId);
 
-        return issueRepository.getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(projectId);
+        return issueRepository.getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(projectId, pageable);
     }
 
     public Issue getIssueById(Long issueId) {

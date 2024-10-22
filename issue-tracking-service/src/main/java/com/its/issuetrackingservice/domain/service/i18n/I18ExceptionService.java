@@ -20,7 +20,11 @@ public class I18ExceptionService {
 		ResourceBundle resourceBundle = ResourceBundle.getBundle("language/messages", locale);
 
 		StringBuilder message = new StringBuilder();
-		message.append(String.format("[%s]", resourceBundle.getString(propertyKey)));
+		String property = propertyKey;
+		if (resourceBundle.containsKey(propertyKey)) {
+			property = resourceBundle.getString(propertyKey);
+		}
+		message.append(String.format("[%s]", property));
 		message.append(String.format(", arguments: [%s]", StringUtils.join(args, ", ")));
 		return message.toString();
 	}

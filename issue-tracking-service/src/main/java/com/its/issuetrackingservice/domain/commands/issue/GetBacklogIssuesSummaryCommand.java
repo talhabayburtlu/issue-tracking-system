@@ -9,19 +9,21 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.IssueMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 
 @Builder
 @AllArgsConstructor
-public class GetBacklogIssuesSummaryCommand extends Command<List<IssueSummaryResponse>> {
+public class GetBacklogIssuesSummaryCommand extends Command<Page<IssueSummaryResponse>> {
     // Inputs
     private Long projectId;
+    private Pageable pageable;
 
     // Generates
-    private List<Issue> issues;
+    private Page<Issue> issues;
 
     // Services
     private IssueService issueService;
@@ -36,10 +38,10 @@ public class GetBacklogIssuesSummaryCommand extends Command<List<IssueSummaryRes
     }
 
     @Override
-    public List<IssueSummaryResponse> execute() {
+    public Page<IssueSummaryResponse> execute() {
         userContext.applyAccessToProject(projectId);
 
-        this.issues = issueService.getBacklogIssues(projectId);
+        this.issues = issueService.getBacklogIssues(projectId, pageable);
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);
         }
@@ -48,8 +50,8 @@ public class GetBacklogIssuesSummaryCommand extends Command<List<IssueSummaryRes
     }
 
     @Override
-    public Optional<List<IssueSummaryResponse>> getResult() {
-        return Optional.ofNullable(issueMapper.toSummaryListResponse(issues));
+    public Optional<Page<IssueSummaryResponse>> getResult() {
+        return Optional.ofNullable(issueMapper.toSummaryPageResponse(issues));
     }
 
 }

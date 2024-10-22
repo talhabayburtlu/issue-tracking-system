@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
@@ -20,6 +20,6 @@ public class ActivityResponse extends AuditableEntityDto {
     private String activityType;
     private Long issueId;
     private Long creatorUserId;
-    private Set<ActivityItemRequest> activityItems;
+    private List<ActivityItemRequest> activityItems;
 
 }

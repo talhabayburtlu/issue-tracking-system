@@ -3,11 +3,13 @@ package com.its.issuetrackingservice.domain.enums;
 import com.its.issuetrackingservice.infrastructure.dto.request.ActivityItemRequest;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Participation;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Sprint;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 @Getter
 @RequiredArgsConstructor
@@ -64,16 +66,23 @@ public enum IssueActivityField {
 
     private static List<ActivityItemRequest> generateForSprint(Issue oldIssue, Issue newIssue) {
         ActivityItemType activityItemType = getActivityItemType(oldIssue);
-        if (Objects.isNull(oldIssue) || !Objects.equals(oldIssue.getSprint(), newIssue.getSprint())) {
-            return List.of(buildActivityItemRequest("sprint", Objects.nonNull(oldIssue) ? oldIssue.getSprint().getName() : null, newIssue.getSprint().getName(), activityItemType));
+        Sprint oldSprint = Objects.nonNull(oldIssue) ? oldIssue.getSprint() : null;
+        Sprint newSprint = newIssue.getSprint();
+
+        if ((Objects.nonNull(oldSprint) || Objects.nonNull(newSprint)) && !(Objects.equals(Objects.nonNull(oldSprint) ? oldSprint.getName() : null, newSprint.getName()))) {
+            return List.of(buildActivityItemRequest("sprint", Objects.nonNull(oldSprint) ? oldSprint.getName() : null, newSprint.getName(), activityItemType));
         }
         return List.of();
     }
 
     private static List<ActivityItemRequest> generateForParticipants(Issue oldIssue, Issue newIssue) {
         List<ActivityItemRequest> activityItemRequests = new ArrayList<>();
-        Set<Participation> removedParticipation = difference(oldIssue.getParticipants(), newIssue.getParticipants());
-        Set<Participation> addedParticipation = difference(newIssue.getParticipants(), oldIssue.getParticipants());
+
+        Set<Participation> oldParticipantsSet = Objects.nonNull(oldIssue) ? oldIssue.getParticipants() : Set.of();
+        Set<Participation> newParticipantsSet = newIssue.getParticipants();
+
+        Set<Participation> removedParticipation = difference(oldParticipantsSet, newParticipantsSet);
+        Set<Participation> addedParticipation = difference(newParticipantsSet, oldParticipantsSet);
 
         activityItemRequests.addAll(removedParticipation.stream()
                 .map(removed -> buildActivityItemRequest(removed.getParticipationType().toString(), removed.getUser().getUsername(), null, ActivityItemType.DELETE))
@@ -96,9 +105,10 @@ public enum IssueActivityField {
                 .build();
     }
 
-    private static <T> Set<T> difference(final Set<T> setOne, final Set<T> setTwo) {
+    private static <T extends Participation> Set<T> difference(final Set<T> setOne, final Set<T> setTwo) {
+        Set<Long> ids = setTwo.stream().map(Participation::getId).collect(Collectors.toSet());
         Set<T> result = new HashSet<>(setOne);
-        result.removeAll(setTwo);
+        result.removeIf(t -> ids.contains(t.getId()));
         return result;
     }
 

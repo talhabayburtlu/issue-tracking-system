@@ -23,10 +23,12 @@ public class Membership extends AuditableEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "project_id", nullable = false)
+	@ToString.Exclude
 	private Project project;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
+	@ToString.Exclude
 	private User user;
 
 	@OneToMany(mappedBy = "membership")

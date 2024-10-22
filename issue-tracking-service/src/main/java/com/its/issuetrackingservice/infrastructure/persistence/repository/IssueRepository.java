@@ -1,6 +1,8 @@
 package com.its.issuetrackingservice.infrastructure.persistence.repository;
 
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -13,7 +15,7 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
 
     List<Issue> getAllByProjectIdAndSprintIdOrderByCreatedDateAsc(Long projectId, Long sprintId);
 
-    List<Issue> getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(Long projectId);
+    Page<Issue> getAllByProjectIdAndSprintIsNullOrderByCreatedDateAsc(Long projectId, Pageable pageable);
 
     Optional<Issue> getIssueByIdAndProjectId(Long issueId, Long projectId);
 

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity()
@@ -59,12 +60,13 @@ public class Issue extends AuditableEntity {
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
-	@OneToMany(mappedBy = "issue")
-	private Set<Activity> activities;
+	// TODO: Remove fetch type eager
+	@OneToMany(mappedBy = "issue", fetch = FetchType.EAGER)
+	private Set<Activity> activities = new HashSet<>();
 
-	@OneToMany(mappedBy = "issue")
-	private Set<Participation> participants;
+	@OneToMany(mappedBy = "issue", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Participation> participants = new HashSet<>();
 
-	@OneToMany(mappedBy = "issue")
+	@OneToMany(mappedBy = "issue", fetch = FetchType.EAGER)
 	private Set<IssueAttachment> attachments;
 }

@@ -38,7 +38,7 @@ public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
     }
 
     @Override
-    protected List<ActivityResponse> execute() {
+    public List<ActivityResponse> execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
         this.activities = activityService.getActivitiesByIssueId(issueId, pageable);

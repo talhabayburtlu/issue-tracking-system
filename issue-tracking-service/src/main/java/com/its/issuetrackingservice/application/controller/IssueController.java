@@ -8,6 +8,8 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueSummaryResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +32,14 @@ public class IssueController {
     }
 
     @GetMapping("/project/{project_id}")
-    public GenericRestResponse<List<IssueSummaryResponse>> getBacklogIssuesSummary(@PathVariable("project_id") Long projectId) {
+    public GenericRestResponse<List<IssueSummaryResponse>> getBacklogIssuesSummary(@PathVariable("project_id") Long projectId,
+                                                                                   Pageable pageable) {
         GetBacklogIssuesSummaryCommand command = GetBacklogIssuesSummaryCommand.builder()
                 .projectId(projectId)
+                .pageable(pageable)
                 .build();
-        return GenericRestResponse.of(invoker.run(command));
+        Page<IssueSummaryResponse> issueSummaryResponses = invoker.run(command);
+        return GenericRestResponse.of(issueSummaryResponses.toList(), issueSummaryResponses.getPageable());
     }
 
     @PostMapping("/project/{project_id}")
@@ -72,6 +77,7 @@ public class IssueController {
                 .issueRequest(issueRequest)
                 .issueId(issueId)
                 .sendNotification(Boolean.TRUE)
+                .createActivity(Boolean.TRUE)
                 .build();
         return GenericRestResponse.of(invoker.run(command));
     }

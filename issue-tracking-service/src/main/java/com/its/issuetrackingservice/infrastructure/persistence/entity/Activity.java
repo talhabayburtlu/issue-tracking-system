@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity()
@@ -40,8 +41,8 @@ public class Activity extends AuditableEntity {
     @JoinColumn(name = "creator_user_id", nullable = false)
     private User creatorUser;
 
-    @OneToMany(mappedBy = "activity")
-    private Set<ActivityItem> activityItems;
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
+    private List<ActivityItem> activityItems;
 
     @OneToMany(mappedBy = "activity")
     private Set<ActivityAttachment> attachments;

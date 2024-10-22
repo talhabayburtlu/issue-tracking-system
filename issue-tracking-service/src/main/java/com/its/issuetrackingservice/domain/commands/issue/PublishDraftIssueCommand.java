@@ -57,7 +57,7 @@ public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
         invoker.run(updateIssueCommand);
 
         // Publish issue after updating
-        Issue issue = updateIssueCommand.getNewIssue();
+        issue = updateIssueCommand.getNewIssue();
         issueService.publishDraftIssue(issue);
 
         // Create activity
@@ -82,6 +82,7 @@ public class PublishDraftIssueCommand extends Command<IssueDetailResponse> {
                 .issueRequest(issueRequest)
                 .issueId(issueId)
                 .returnResultAfterExecution(Boolean.FALSE)
+                .createActivity(Boolean.FALSE)
                 .build();
     }
 

@@ -1,11 +1,14 @@
 package com.its.issuetrackingservice.domain.commands;
 
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Invoker {
     private static final String START_COMMAND_FORMAT = "Starting to running the command: %s";
     private static final String FINISH_COMMAND_FORMAT = "Finishing running the command: %s";
+
+    @Transactional
     public <R> R run(Command<R> command) {
         command.init();
         logCommand(command, START_COMMAND_FORMAT);

@@ -6,6 +6,7 @@ import com.its.issuetrackingservice.infrastructure.dto.response.IssueDetailRespo
 import com.its.issuetrackingservice.infrastructure.dto.response.IssueSummaryResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import org.mapstruct.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public abstract class IssueMapper {
     public abstract IssueSummaryResponse toSummaryResponse(Issue issue);
 
     public abstract List<IssueSummaryResponse> toSummaryListResponse(List<Issue> issues);
+
+    public Page<IssueSummaryResponse> toSummaryPageResponse(Page<Issue> issues) {
+       return issues.map(this::toSummaryResponse);
+    }
 
     @Mapping(source = "sprint", target = "sprintId")
     @Mapping(source = "state", target = "stateId")
@@ -33,5 +38,7 @@ public abstract class IssueMapper {
     @Mapping(source = "stateId", target = "state")
     @Mapping(source = "categoryId", target = "category")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract Issue patchEntity(IssueRequest issueRequest, @MappingTarget Issue issue);
+    public abstract void patchEntity(IssueRequest issueRequest, @MappingTarget Issue issue);
+
+    public abstract Issue cloneEntity(Issue issue);
 }

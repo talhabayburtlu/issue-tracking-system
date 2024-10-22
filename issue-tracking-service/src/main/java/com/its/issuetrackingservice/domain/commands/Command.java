@@ -21,8 +21,7 @@ public abstract class Command<R> {
     }
 
     protected abstract void init();
-
-    protected abstract R execute();
+    public abstract R execute();
 
     public abstract Optional<R> getResult();
 }

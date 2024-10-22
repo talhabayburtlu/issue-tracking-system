@@ -1,6 +1,8 @@
 package com.its.issuetrackingservice.domain.service;
 
+import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.enums.ParticipationType;
+import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.request.IssueRequest;
 import com.its.issuetrackingservice.infrastructure.dto.request.ParticipantRequest;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,8 +28,9 @@ public class ParticipantService {
     private final UserContext userContext;
     private final UserService userService;
     private final ParticipationRepository participationRepository;
-    public void deleteParticipants(Set<Long> idsToBeDeleted) {
-        participationRepository.deleteAllById(idsToBeDeleted);
+
+    public void removeAllParticipants(Set<Long> participantIds) {
+        participationRepository.deleteAllById(participantIds);
     }
 
     public Set<Long> getParticipantIdsToRemove(IssueRequest issueRequest) {
@@ -40,27 +45,43 @@ public class ParticipantService {
         return ids;
     }
 
-    public Set<Participation> buildParticipants(IssueRequest issueRequest, Issue issue, Boolean includeIDs) {
+    public Set<Participation> buildParticipants(IssueRequest issueRequest, Issue issue, Boolean isForUpdate) {
         Set<Participation> participationSet = new HashSet<>();
         User creatorUser = userContext.getUser();
-        participationSet.add(buildParticipation(creatorUser, issue, ParticipationType.CREATOR));
+        if (Boolean.FALSE.equals(isForUpdate)) {
+            participationSet.add(buildParticipation(creatorUser, issue, ParticipationType.CREATOR));
+        }
 
         if (Objects.isNull(issueRequest.getParticipantsRequest())) {
             return participationSet;
         }
 
-        issueRequest.getParticipantsRequest().getAssignees().forEach(assignee -> participationSet.add(buildParticipation(assignee, issue, ParticipationType.ASSIGNEE, includeIDs)));
-        issueRequest.getParticipantsRequest().getVerifiers().forEach(verifier -> participationSet.add(buildParticipation(verifier, issue, ParticipationType.VERIFIER, includeIDs)));
-        issueRequest.getParticipantsRequest().getReviewers().forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.REVIEWER, includeIDs)));
+        issueRequest.getParticipantsRequest().getAssignees().stream()
+                .filter(Predicate.not(ParticipantRequest::isDelete))
+                .forEach(assignee -> participationSet.add(buildParticipation(assignee, issue, ParticipationType.ASSIGNEE, isForUpdate)));
+        issueRequest.getParticipantsRequest().getVerifiers().stream()
+                .filter(Predicate.not(ParticipantRequest::isDelete))
+                .forEach(verifier -> participationSet.add(buildParticipation(verifier, issue, ParticipationType.VERIFIER, isForUpdate)));
+        issueRequest.getParticipantsRequest().getReviewers().stream()
+                .filter(Predicate.not(ParticipantRequest::isDelete))
+                .forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.REVIEWER, isForUpdate)));
+        issueRequest.getParticipantsRequest().getWatchers().stream()
+                .filter(Predicate.not(ParticipantRequest::isDelete))
+                .forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.WATCHER, isForUpdate)));
         return participationSet;
     }
 
     public Participation buildParticipation(ParticipantRequest participantRequest, Issue issue, ParticipationType participationType, boolean includeIDs) {
-        User user = userService.getUserById(participantRequest.getUserId());
+        User user;
         if (Boolean.TRUE.equals(includeIDs)) {
-            return buildParticipation(participantRequest.getId(), user, issue, participationType);
+            Long participationId = participantRequest.getId();
+            Participation participation = getParticipationById(participationId);
+            user = participation.getUser();
+
+            return buildParticipation(participationId, user, issue, participationType);
         }
 
+        user = userService.getUserById(participantRequest.getUserId());
         return buildParticipation(user, issue, participationType);
     }
 
@@ -69,13 +90,25 @@ public class ParticipantService {
     }
 
     public Participation buildParticipation(Long id, User user, Issue issue, ParticipationType participationType) {
-        return Participation.builder()
+        Participation participation = Participation.builder()
                 .id(id)
                 .issue(issue)
                 .user(user)
                 .participationType(participationType)
                 .isWatching(Boolean.TRUE)
                 .build();
+        participation.setAuditableFields(userContext);
+
+        return participation;
+    }
+
+    public Participation getParticipationById(Long participationId) {
+        Optional<Participation> optionalParticipation = participationRepository.findById(participationId);
+        if (optionalParticipation.isEmpty()) {
+            throw new DataNotFoundException(I18nExceptionKeys.PARTICIPATION_NOT_FOUND, String.format("participation id=%d", participationId));
+        }
+
+        return optionalParticipation.get();
     }
 
 
