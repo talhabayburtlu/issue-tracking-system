@@ -40,6 +40,7 @@ public class UploadActivityAttachmentCommand extends Command<ActivityAttachmentS
 
     @Override
     public void init() {
+        this.activityService = SpringContext.getBean(ActivityService.class);
         this.attachmentService = SpringContext.getBean(AttachmentService.class);
         this.attachmentMapper = SpringContext.getBean(AttachmentMapper.class);
         this.userContext = SpringContext.getBean(UserContext.class);

@@ -9,21 +9,21 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 
 @SuperBuilder
 @AllArgsConstructor
-public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
+public class GetIssueActivitiesCommand extends Command<Page<ActivityResponse>> {
     // Inputs
     private Long issueId;
     private Pageable pageable;
 
     // Generates
-    private List<Activity> activities;
+    private Page<Activity> activities;
 
     // Services
     private ActivityService activityService;
@@ -38,7 +38,7 @@ public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
     }
 
     @Override
-    public List<ActivityResponse> execute() {
+    public Page<ActivityResponse> execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
         this.activities = activityService.getActivitiesByIssueId(issueId, pageable);
@@ -51,8 +51,8 @@ public class GetIssueActivitiesCommand extends Command<List<ActivityResponse>> {
     }
 
     @Override
-    public Optional<List<ActivityResponse>> getResult() {
-        return Optional.ofNullable(activityMapper.toListResponse(activities));
+    public Optional<Page<ActivityResponse>> getResult() {
+        return Optional.ofNullable(activityMapper.toPageResponse(activities));
     }
 
 

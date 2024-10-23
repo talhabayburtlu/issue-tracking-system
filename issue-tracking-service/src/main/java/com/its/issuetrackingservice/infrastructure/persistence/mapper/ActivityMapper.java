@@ -9,8 +9,7 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import lombok.Setter;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Mapper(config = MapStructConfig.class, uses = {ActivityItemMapper.class})
 public abstract class ActivityMapper {
@@ -26,12 +25,14 @@ public abstract class ActivityMapper {
     @Mapping(source = "creatorUserId", target = "creatorUser.id")
     public abstract Activity activityRequestToEntity(ActivityRequest activityRequest);
 
-    @Mapping(source = "issueId", target = "issue.id")
+    @Mapping(source = "issueId", target = "issue.id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     public abstract Activity commentRequestToEntity(CommentRequest commentRequest, Long issueId);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract Activity patchComment(CommentRequest commentRequest, @MappingTarget Activity activity);
 
-    public abstract List<ActivityResponse> toListResponse(List<Activity> activities);
+    public Page<ActivityResponse> toPageResponse(Page<Activity> activities) {
+        return activities.map(this::toResponse);
+    }
 
 }

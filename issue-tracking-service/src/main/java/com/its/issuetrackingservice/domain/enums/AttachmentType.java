@@ -23,7 +23,7 @@ public enum AttachmentType {
     }
 
     private static class Constants {
-        private static final List<String> IMAGE_CONTENT_TYPES = List.of(MimeTypeUtils.IMAGE_JPEG.getType(), MimeTypeUtils.IMAGE_PNG.getType(), MimeTypeUtils.IMAGE_GIF.getType());
+        private static final List<String> IMAGE_CONTENT_TYPES = List.of(MimeTypeUtils.IMAGE_JPEG.toString(), MimeTypeUtils.IMAGE_PNG.toString(), MimeTypeUtils.IMAGE_GIF.toString());
         private static final List<String> VIDEO_CONTENT_TYPES = List.of("video/mp4");
     }
 

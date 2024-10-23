@@ -80,13 +80,13 @@ public class AttachmentService {
     }
 
     public Set<IssueAttachment> getAttachmentsOfIssue(Long issueId) {
-        Issue issue = issueService.getIssueById(issueId);
-        return issue.getAttachments();
+        issueService.getIssueById(issueId);
+        return issueAttachmentRepository.findAllByIssueId(issueId);
     }
 
     public Set<ActivityAttachment> getAttachmentsOfActivity(Long activityId, Long issueId) {
-        Activity activity = activityService.getActivityById(activityId, issueId);
-        return activity.getAttachments();
+        activityService.getActivityById(activityId, issueId);
+        return activityAttachmentRepository.findAllByActivityId(activityId);
     }
 
     public List<Byte> getAttachmentContent(Long attachmentId) {

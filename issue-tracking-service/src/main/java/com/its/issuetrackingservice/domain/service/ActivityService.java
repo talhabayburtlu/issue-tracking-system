@@ -7,10 +7,10 @@ import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
 import com.its.issuetrackingservice.infrastructure.persistence.repository.ActivityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,7 +29,7 @@ public class ActivityService {
         return optionalActivityItem.get();
     }
 
-    public List<Activity> getActivitiesByIssueId(Long issueId, Pageable pageable) {
+    public Page<Activity> getActivitiesByIssueId(Long issueId, Pageable pageable) {
         return activityRepository.getActivitiesByIssueId(issueId, pageable);
     }
 

@@ -10,6 +10,7 @@ import com.its.issuetrackingservice.infrastructure.dto.request.CommentRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,8 @@ public class ActivityController {
                 .issueId(issueId)
                 .pageable(pageable)
                 .build();
-        return GenericRestResponse.of(invoker.run(command));
+        Page<ActivityResponse> activities = invoker.run(command);
+        return GenericRestResponse.of(activities.toList(), activities.getPageable());
     }
 
     @PostMapping("/issue/{issue_id}")

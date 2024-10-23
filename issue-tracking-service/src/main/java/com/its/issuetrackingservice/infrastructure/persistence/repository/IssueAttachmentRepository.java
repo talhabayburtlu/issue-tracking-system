@@ -4,9 +4,13 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttac
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Set;
+
 public interface IssueAttachmentRepository extends JpaRepository<IssueAttachment, Long> {
 
     @Query("SELECT COUNT(*) FROM IssueAttachment a WHERE a.issue.id = :issueId")
     Long getCountByIssueId(Long issueId);
+
+    Set<IssueAttachment> findAllByIssueId(Long issueId);
 
 }

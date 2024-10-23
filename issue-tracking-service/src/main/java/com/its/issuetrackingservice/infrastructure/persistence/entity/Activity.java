@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,9 +44,11 @@ public class Activity extends AuditableEntity {
     private User creatorUser;
 
     @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
-    private List<ActivityItem> activityItems;
+    @Builder.Default
+    private List<ActivityItem> activityItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "activity")
-    private Set<ActivityAttachment> attachments;
+    @Builder.Default
+    private Set<ActivityAttachment> attachments = new HashSet<>();
 
 }

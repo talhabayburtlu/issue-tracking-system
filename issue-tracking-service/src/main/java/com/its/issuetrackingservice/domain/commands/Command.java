@@ -1,9 +1,6 @@
 package com.its.issuetrackingservice.domain.commands;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Optional;
@@ -14,6 +11,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class Command<R> {
+    @Builder.Default
     private Boolean returnResultAfterExecution = Boolean.TRUE;
 
     public String getName() {
