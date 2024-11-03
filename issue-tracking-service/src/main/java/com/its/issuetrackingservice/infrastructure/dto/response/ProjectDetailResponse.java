@@ -5,10 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class CategoryResponse extends AuditableEntityDto {
+public class ProjectDetailResponse extends AuditableEntityDto {
 	@Serial
 	private static final long serialVersionUID = -3254824055423661547L;
 
@@ -17,5 +18,9 @@ public class CategoryResponse extends AuditableEntityDto {
 
 	private String name;
 	private String description;
-
+	private String abbreviation;
+	private Boolean isActive;
+	private List<SprintResponse> sprints;
+	private List<StateResponse> states;
+	private List<CategoryResponse> categories;
 }

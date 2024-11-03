@@ -8,14 +8,14 @@ import java.io.Serial;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class CategoryResponse extends AuditableEntityDto {
+public class StateResponse extends AuditableEntityDto {
 	@Serial
 	private static final long serialVersionUID = -3254824055423661547L;
 
 	@EqualsAndHashCode.Include
 	private Long id;
-
-	private String name;
+	private String title;
 	private String description;
-
+	private Boolean isInitial;
+	private Long nextStateId;
 }

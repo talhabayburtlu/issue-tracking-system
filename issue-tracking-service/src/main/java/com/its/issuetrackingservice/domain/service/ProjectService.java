@@ -3,7 +3,9 @@ package com.its.issuetrackingservice.domain.service;
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.DataNotFoundException;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
+import com.its.issuetrackingservice.infrastructure.dto.request.ProjectRequest;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Project;
+import com.its.issuetrackingservice.infrastructure.persistence.mapper.ProjectMapper;
 import com.its.issuetrackingservice.infrastructure.persistence.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +18,12 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+    private final SprintService sprintService;
+    private final StateService stateService;
+    private final CategoryService categoryService;
     private final ProjectRepository projectRepository;
     private final UserContext userContext;
+    private final ProjectMapper projectMapper;
 
     public Project getProjectById(Long projectId) {
         Optional<Project> project = projectRepository.findById(projectId);
@@ -49,6 +55,19 @@ public class ProjectService {
         if (Objects.isNull(project) && isRequired) {
             throw new DataNotFoundException(I18nExceptionKeys.PROJECT_NOT_FOUND, String.format("project keycloak id=%d", keycloakId));
         }
+
+        return project;
+    }
+
+    public Project updateProject(Long projectId, ProjectRequest projectRequest) {
+        Project project = getProjectById(projectId);
+        projectMapper.patchEntity(projectRequest, project);
+
+        project = upsertProject(project, false);
+
+        sprintService.updateSprints(projectRequest.getSprints(), project);
+        stateService.updateStates(projectRequest.getStates(), project);
+        categoryService.updateCategories(projectRequest.getCategories(), project);
 
         return project;
     }

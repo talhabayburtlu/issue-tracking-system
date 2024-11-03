@@ -8,7 +8,7 @@ import java.io.Serial;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class CategoryResponse extends AuditableEntityDto {
+public class ProjectSummaryResponse extends AuditableEntityDto {
 	@Serial
 	private static final long serialVersionUID = -3254824055423661547L;
 
@@ -17,5 +17,6 @@ public class CategoryResponse extends AuditableEntityDto {
 
 	private String name;
 	private String description;
-
+	private String abbreviation;
+	private Boolean isActive;
 }

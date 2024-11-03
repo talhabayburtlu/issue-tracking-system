@@ -47,6 +47,10 @@ public class Project extends AuditableEntity {
 
 	@OneToMany(mappedBy = "project")
 	@Lazy
+	private Set<Sprint> sprints;
+
+	@OneToMany(mappedBy = "project")
+	@Lazy
 	private Set<State> states;
 
 	@OneToMany(mappedBy = "project")

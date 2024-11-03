@@ -23,4 +23,9 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     @Query("SELECT i.project.id FROM Issue i WHERE i.id = :issueId")
     Long getProjectIdByIssueId(Long issueId);
 
+    boolean existsBySprintIdIn(List<Long> sprintIds);
+
+    boolean existsByStateIdIn(List<Long> stateIds);
+    boolean existsByCategoryIdIn(List<Long> categoryIds);
+
 }

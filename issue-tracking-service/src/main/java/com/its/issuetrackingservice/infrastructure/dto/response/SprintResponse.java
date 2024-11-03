@@ -8,14 +8,13 @@ import java.io.Serial;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class CategoryResponse extends AuditableEntityDto {
+public class SprintResponse extends AuditableEntityDto {
 	@Serial
 	private static final long serialVersionUID = -3254824055423661547L;
 
 	@EqualsAndHashCode.Include
 	private Long id;
-
 	private String name;
-	private String description;
-
+	private Short period;
+	private Short version;
 }
