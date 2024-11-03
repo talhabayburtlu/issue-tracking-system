@@ -16,5 +16,6 @@ public class CategoryResponse extends AuditableEntityDto {
 	private Long id;
 
 	private String name;
+	private String description;
 
 }
