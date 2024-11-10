@@ -6,6 +6,11 @@ import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import com.its.issuetrackingservice.infrastructure.persistence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -16,6 +21,9 @@ import java.util.Optional;
 public class UserService {
 	private final UserRepository userRepository;
 	private final UserContext userContext;
+
+	@Setter(onMethod_ = {@Autowired, @Lazy})
+	private UserService selfReference;
 
 	public User getUserByUsername(String username, boolean isRequired) {
 		User user = userRepository.getUserByUsername(username);
@@ -42,16 +50,18 @@ public class UserService {
 		return user.get();
 	}
 
+	@CachePut(value = "userByKeycloakId", key = "{#user.keycloakId}")
+	@CacheEvict(value = "projectsOfMember", key = "{#user.id}")
 	public User upsertUser(User user, boolean isSystemUser) {
 		user.setAuditableFields(!isSystemUser ? userContext: null);
 		return userRepository.save(user);
 	}
 
 	public void changeActiveStateOfUser(String keycloakId, boolean isActive, boolean isSystemUser) {
-		User user = getUserByKeycloakId(keycloakId, false);
+		User user = selfReference.getUserByKeycloakId(keycloakId, false);
 		if (Objects.nonNull(user)) {
 			user.setIsActive(isActive);
-			upsertUser(user, isSystemUser);
+			selfReference.upsertUser(user, isSystemUser);
 		}
 	}
 }

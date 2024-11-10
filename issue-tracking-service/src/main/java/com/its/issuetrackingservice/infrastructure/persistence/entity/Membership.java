@@ -6,7 +6,7 @@ import lombok.*;
 import java.util.Set;
 
 @Entity()
-@Table(name = "membership")
+@Table(name = "membership", uniqueConstraints = {@UniqueConstraint(name = "uk_membership_project_id_user_id", columnNames = {"project_id" ,"user_id"})})
 @Getter
 @Setter
 @NoArgsConstructor

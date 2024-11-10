@@ -34,12 +34,11 @@ public class DeleteGroupMembershipKeycloakEventType extends AbstractKeycloakEven
             return;
         }
 
-        Optional<Membership> membershipOptional = user.getMemberships().stream().filter(membership -> membership.getProject().equals(project)).findFirst();
+        Optional<Membership> membershipOptional = getMembershipService().getMembershipByProjectAndUserId(user.getId(), project.getId());
         if (membershipOptional.isEmpty()) {
             throw new InternalServerException(I18nExceptionKeys.KEYCLOAK_GROUP_MEMBERSHIP_NOT_FOUND);
         }
 
-        user.getMemberships().remove(membershipOptional.get());
-        getUserService().upsertUser(user, Boolean.TRUE);
+        getMembershipService().deleteMembership(membershipOptional.get());
     }
 }

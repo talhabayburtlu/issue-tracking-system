@@ -2,6 +2,7 @@ package com.its.issuetrackingservice.infrastructure.messaging.model;
 
 import com.its.issuetrackingservice.domain.constants.I18nExceptionKeys;
 import com.its.issuetrackingservice.domain.exception.InternalServerException;
+import com.its.issuetrackingservice.domain.service.MembershipService;
 import com.its.issuetrackingservice.domain.service.ProjectService;
 import com.its.issuetrackingservice.domain.service.UserService;
 import com.its.issuetrackingservice.infrastructure.messaging.KeycloakEventFactory;
@@ -23,6 +24,9 @@ public abstract class AbstractKeycloakEvent {
 
     @Setter(onMethod_ = {@Autowired})
     private ProjectService projectService;
+
+    @Setter(onMethod_ = {@Autowired})
+    private MembershipService membershipService;
 
     public abstract KeycloakEventType supportedKeycloakEventType();
     public abstract void processEvent(KeycloakEvent keycloakEvent);

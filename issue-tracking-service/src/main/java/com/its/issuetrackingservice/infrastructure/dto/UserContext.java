@@ -40,10 +40,6 @@ public class UserContext {
         }
     }
 
-    private boolean haveAccessToProject(Project project) {
-        return projects.stream().anyMatch(userProject -> Objects.equals(userProject.getId(), project.getId()));
-    }
-
     private boolean haveAccessToProject(Long projectId) {
         return projects.stream().anyMatch(userProject -> Objects.equals(userProject.getId(), projectId));
     }
