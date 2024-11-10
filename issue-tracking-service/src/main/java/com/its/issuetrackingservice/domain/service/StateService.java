@@ -58,11 +58,11 @@ public class StateService {
 
     public void deleteStatesByIdList(List<Long> stateIdList) {
         if (issueRepository.existsByStateIdIn(stateIdList)) {
-            throw new WrongUsageException(I18nExceptionKeys.STATE_MUST_NOT_CONTAIN_ANY_ISSUE_TO_BE_DELETED, String.format("state id list=%s" , stateIdList.toString()));
+            throw new WrongUsageException(I18nExceptionKeys.STATES_MUST_NOT_CONTAIN_ANY_ISSUE_TO_BE_DELETED, String.format("state id list=%s" , stateIdList.toString()));
         }
 
         if (stateRepository.existsByNextStateIdIn(stateIdList)) {
-            throw new WrongUsageException(I18nExceptionKeys.STATE_MUST_NOT_BE_NEXT_STATE_TO_BE_DELETED, String.format("state id list=%s" , stateIdList.toString()));
+            throw new WrongUsageException(I18nExceptionKeys.STATES_MUST_NOT_BE_NEXT_STATE_TO_BE_DELETED, String.format("state id list=%s" , stateIdList.toString()));
         }
 
         stateRepository.deleteAllById(stateIdList);

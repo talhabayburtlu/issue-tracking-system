@@ -40,7 +40,7 @@ public class CategoryService {
 
     public void deleteCategoriesByIdList(List<Long> categoryIdList) {
         if (issueRepository.existsByCategoryIdIn(categoryIdList)) {
-            throw new WrongUsageException(I18nExceptionKeys.CATEGORY_MUST_NOT_CONTAIN_ANY_ISSUE_TO_BE_DELETED, String.format("category id list=%s" , categoryIdList.toString()));
+            throw new WrongUsageException(I18nExceptionKeys.CATEGORIES_MUST_NOT_CONTAIN_ANY_ISSUE_TO_BE_DELETED, String.format("category id list=%s" , categoryIdList.toString()));
         }
 
         categoryRepository.deleteAllById(categoryIdList);

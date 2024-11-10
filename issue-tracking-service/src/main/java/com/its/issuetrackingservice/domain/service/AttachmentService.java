@@ -110,25 +110,25 @@ public class AttachmentService {
         }
 
         if (Objects.isNull(file.getContentType())) {
-            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_IS_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES.toString()));
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES.toString()));
         }
 
         if (!ALLOWED_ATTACHMENT_CONTENT_TYPES.contains(file.getContentType())) {
-            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_IS_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES));
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_CONTENT_TYPE_NOT_ALLOWED, String.format("allowed content types are= %s", ALLOWED_ATTACHMENT_CONTENT_TYPES));
         }
     }
 
     private void checkIssueAttachmentRequirements(Long issueId) {
         Long countOfAttachments = issueAttachmentRepository.getCountByIssueId(issueId);
         if (countOfAttachments.compareTo(ISSUE_MAX_ATTACHMENT_COUNT) > 0) {
-            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_AN_ISSUE, String.format("max count= %d, current count= %d", ISSUE_MAX_ATTACHMENT_COUNT, countOfAttachments));
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_ISSUE, String.format("max count= %d, current count= %d", ISSUE_MAX_ATTACHMENT_COUNT, countOfAttachments));
         }
     }
 
     private void checkActivityAttachmentRequirements(Long activityId) {
         Long countOfAttachments = activityAttachmentRepository.getCountByActivityId(activityId);
         if (countOfAttachments.compareTo(ACTIVITY_MAX_ATTACHMENT_COUNT) > 0) {
-            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_AN_ISSUE, String.format("max count= %d, current count= %d", ACTIVITY_MAX_ATTACHMENT_COUNT, countOfAttachments));
+            throw new WrongUsageException(I18nExceptionKeys.ATTACHMENT_COUNT_EXCEEDED_FOR_ISSUE, String.format("max count= %d, current count= %d", ACTIVITY_MAX_ATTACHMENT_COUNT, countOfAttachments));
         }
     }
 
