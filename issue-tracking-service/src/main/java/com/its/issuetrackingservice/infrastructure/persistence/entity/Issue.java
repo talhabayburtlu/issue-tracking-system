@@ -60,7 +60,6 @@ public class Issue extends AuditableEntity {
 	@JoinColumn(name = "project_id", nullable = false)
 	private Project project;
 
-	// TODO: Remove fetch type eager
 	@OneToMany(mappedBy = "issue", fetch = FetchType.EAGER)
 	private Set<Activity> activities = new HashSet<>();
 

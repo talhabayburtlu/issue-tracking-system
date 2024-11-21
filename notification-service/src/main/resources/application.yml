@@ -1,0 +1,23 @@
+server:
+  port: 9009
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/notification
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        format_sql: false
+        show_sql: false
+    database: postgresql
+  application:
+    name: notification-service
+  main:
+    allow-bean-definition-overriding: true
+  kafka:
+    bootstrap-servers: localhost:29092

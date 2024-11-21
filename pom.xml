@@ -24,6 +24,7 @@
         <module>gateway-service</module>
         <module>issue-tracking-service</module>
         <module>keycloak-integration-service</module>
+        <module>notification-service</module>
     </modules>
 
 </project>

@@ -1,4 +1,4 @@
-package com.its.gatewayservice;
+package com.its.notificationservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

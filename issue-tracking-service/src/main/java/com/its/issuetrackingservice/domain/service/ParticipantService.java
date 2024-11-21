@@ -14,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -43,6 +40,10 @@ public class ParticipantService {
         ids.addAll(issueRequest.getParticipantsRequest().getReviewers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
         ids.addAll(issueRequest.getParticipantsRequest().getWatchers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
         return ids;
+    }
+
+    public List<Participation> getIssueWatcherParticipants(Long issueId) {
+        return participationRepository.getParticipationByIssueIdAndIsWatchingTrue(issueId);
     }
 
     public Set<Participation> buildParticipants(IssueRequest issueRequest, Issue issue, Boolean isForUpdate) {
@@ -73,7 +74,7 @@ public class ParticipantService {
 
     public Participation buildParticipation(ParticipantRequest participantRequest, Issue issue, ParticipationType participationType, boolean includeIDs) {
         User user;
-        if (Boolean.TRUE.equals(includeIDs)) {
+        if (Boolean.TRUE.equals(includeIDs) && participantRequest.getId() != null) {
             Long participationId = participantRequest.getId();
             Participation participation = getParticipationById(participationId);
             user = participation.getUser();

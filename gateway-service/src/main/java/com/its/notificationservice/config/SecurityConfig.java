@@ -1,4 +1,4 @@
-package com.its.gatewayservice.config;
+package com.its.notificationservice.config;
 
 import com.google.common.base.Strings;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
