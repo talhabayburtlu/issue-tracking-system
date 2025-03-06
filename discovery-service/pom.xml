@@ -6,10 +6,11 @@
         <groupId>com.its</groupId>
         <artifactId>its-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>discovery-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>discovery-service</name>
     <description>discovery-service</description>
     <properties>

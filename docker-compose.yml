@@ -1,26 +1,32 @@
-version: '2'
 services:
   postgres:
     image: postgres:16
+    container_name: postgres
     environment:
-      POSTGRES_MULTIPLE_DATABASES: ITS, keycloak
+      POSTGRES_MULTIPLE_DATABASES: ITS, keycloak, notification
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
     volumes:
       - ./multiple-databases.sh:/docker-entrypoint-initdb.d/multiple-databases.sh
+    networks:
+      - backend
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    networks:
+      - backend
 
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka
     depends_on:
       - zookeeper
     ports:
@@ -33,6 +39,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - backend
 
   kowl:
     image: quay.io/cloudhut/kowl:latest
@@ -44,26 +52,96 @@ services:
       - kafka
     environment:
       - KAFKA_BROKERS=kafka:9092
+    networks:
+      - backend
 
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
-    command: ["start-dev", "--http-port=8090"]
+    container_name: keycloak
+    command: ["start", "--import-realm"]
     environment:
       KC_LOG_LEVEL: info
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres/keycloak
       KC_DB_USERNAME: postgres
       KC_DB_PASSWORD: postgres
+      KC_HOSTNAME_ADMIN: localhost
+      KC_HOSTNAME_STRICT: false
+      KC_HTTP_ENABLED: true
+      KC_HTTPS_CERTIFICATE_FILE: /opt/keycloak/conf/kc.crt.pem
+      KC_HTTPS_CERTIFICATE_KEY_FILE: /opt/keycloak/conf/kc.key.pem
+      KC_HTTP_PORT: 8090
+      KC_FRONTEND_URL: http://keycloak:8090/realms/its-realm
+      #KC_FRONTEND_URL: http://localhost:8090/realms/its-realm
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: test
-      DEBUG: true
-      DEBUG_PORT: "*:8787"
       KAFKA_BOOTSTRAP_ADDRESS: kafka:9092
     volumes:
       - ./keycloak-integration-service/target/keycloak-integration-service-0.0.1-SNAPSHOT.jar:/opt/keycloak/providers/custom-event-listener.jar
+      - ./keycloak-integration-service/src/main/resources/realm-export.json:/opt/keycloak/data/import/realm-export.json
+      - ./certificates:/opt/keycloak/conf/
     depends_on:
       - postgres
       - kafka
     ports:
       - 8090:8090
       - 8787:8787
+    networks:
+      - backend
+
+  discovery-service:
+    build:
+      context: .
+      dockerfile: discovery-service/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DISCOVERY_URL: discovery-service
+    restart: always
+    container_name: discovery-service
+    networks:
+      - backend
+
+  gateway-service:
+    build:
+      context: .
+      dockerfile: gateway-service/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      EUREKA_URL: http://discovery-service:8080/eureka
+      KEYCLOAK_URL: http://keycloak:8090/realms/its-realm
+    restart: always
+    container_name: gateway-service
+    networks:
+      - backend
+
+  issue-tracking-service:
+    build:
+      context: .
+      dockerfile: issue-tracking-service/Dockerfile
+    environment:
+      DB_HOST: postgres
+      EUREKA_URL: http://discovery-service:8080/eureka
+      KAFKA_URL: kafka:9092
+      EUREKA_PREFER_IP_ADDRESS: false
+    restart: always
+    container_name: issue-tracking-service
+    networks:
+      - backend
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    environment:
+      DB_HOST: postgres
+      KAFKA_URL: kafka:9092
+    restart: always
+    container_name: notification-service
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

@@ -5,6 +5,10 @@ server:
       cookie:
         same-site: lax
 
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -19,14 +23,14 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8090/realms/its-realm
+          issuer-uri: ${KEYCLOAK_URL:http://localhost:8090/realms/its-realm}
 
 eureka:
   client:
-    register-with-eureka: false
+    register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${eureka_url:http://localhost:8080/eureka}
+      defaultZone: ${EUREKA_URL:http://localhost:8080/eureka}
   instance:
-    hostname: localhost
-    prefer-ip-address: true
+    hostname: gateway-service
+    prefer-ip-address: false

@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/its
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/its
     username: postgres
     password: postgres
   jpa:
@@ -22,16 +22,14 @@ spring:
   main:
     allow-bean-definition-overriding: true
   kafka:
-    bootstrap-servers: localhost:29092
-
-
+    bootstrap-servers: ${KAFKA_URL:localhost:29092}
 
 eureka:
   client:
-    register-with-eureka: false
+    register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: ${eureka_url:http://localhost:8080/eureka}
+      defaultZone: ${EUREKA_URL:http://localhost:8080/eureka}
   instance:
-    hostname: localhost
-    prefer-ip-address: true
+    hostname: issue-tracking-service
+    prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS:true}

@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/notification
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/notification
     username: postgres
     password: postgres
   jpa:
@@ -20,4 +20,4 @@ spring:
   main:
     allow-bean-definition-overriding: true
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: ${KAFKA_URL:localhost:29092}
