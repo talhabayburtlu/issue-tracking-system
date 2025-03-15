@@ -1,6 +1,7 @@
 package com.its.issuetrackingservice.infrastructure.dto.response;
 
 import com.its.issuetrackingservice.infrastructure.dto.AuditableEntityDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -13,8 +14,12 @@ public class IssueAttachmentSummaryResponse extends AuditableEntityDto {
 	private static final long serialVersionUID = -3254824055423661547L;
 
 	@EqualsAndHashCode.Include
+	@Schema(name = "id", description = "The id of the issue attachment", type = "Long", example = "1")
 	private Long id;
 
+	@Schema(name = "attachmentType", description = "Type of the attachment", type = "Long", example = "IMAGE")
 	private String attachmentType;
+
+	@Schema(name = "issueId", description = "The id of the issue attachment", type = "Long", example = "1")
 	private Long issueId;
 }

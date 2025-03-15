@@ -27,16 +27,17 @@ public abstract class IssueMapper {
     @Mapping(source = "sprint", target = "sprintId")
     @Mapping(source = "state", target = "stateId")
     @Mapping(source = "category", target = "categoryId")
-    // @Mapping(source = "subsystems", target = "subsystemIds")
     public abstract IssueDetailResponse toDetailResponse(Issue issue);
 
     @Mapping(source = "sprintId", target = "sprint")
     @Mapping(source = "categoryId", target = "category")
+    @Mapping(target = "participants" , ignore = true)
     public abstract Issue toEntity(IssueRequest issueRequest);
 
     @Mapping(source = "sprintId", target = "sprint")
     @Mapping(source = "stateId", target = "state")
     @Mapping(source = "categoryId", target = "category")
+    @Mapping(target = "participants" , ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     public abstract void patchEntity(IssueRequest issueRequest, @MappingTarget Issue issue);
 

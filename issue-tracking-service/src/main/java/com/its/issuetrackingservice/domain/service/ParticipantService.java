@@ -32,13 +32,13 @@ public class ParticipantService {
 
     public Set<Long> getParticipantIdsToRemove(IssueRequest issueRequest) {
         Set<Long> ids = new HashSet<>();
-        if (Objects.isNull(issueRequest.getParticipantsRequest())) {
+        if (Objects.isNull(issueRequest.getParticipants())) {
             return Set.of();
         }
-        ids.addAll(issueRequest.getParticipantsRequest().getAssignees().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
-        ids.addAll(issueRequest.getParticipantsRequest().getVerifiers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
-        ids.addAll(issueRequest.getParticipantsRequest().getReviewers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
-        ids.addAll(issueRequest.getParticipantsRequest().getWatchers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
+        ids.addAll(issueRequest.getParticipants().getAssignees().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
+        ids.addAll(issueRequest.getParticipants().getVerifiers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
+        ids.addAll(issueRequest.getParticipants().getReviewers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
+        ids.addAll(issueRequest.getParticipants().getWatchers().stream().filter(ParticipantRequest::isDelete).map(ParticipantRequest::getId).collect(Collectors.toSet()));
         return ids;
     }
 
@@ -53,20 +53,20 @@ public class ParticipantService {
             participationSet.add(buildParticipation(creatorUser, issue, ParticipationType.CREATOR));
         }
 
-        if (Objects.isNull(issueRequest.getParticipantsRequest())) {
+        if (Objects.isNull(issueRequest.getParticipants())) {
             return participationSet;
         }
 
-        issueRequest.getParticipantsRequest().getAssignees().stream()
+        issueRequest.getParticipants().getAssignees().stream()
                 .filter(Predicate.not(ParticipantRequest::isDelete))
                 .forEach(assignee -> participationSet.add(buildParticipation(assignee, issue, ParticipationType.ASSIGNEE, isForUpdate)));
-        issueRequest.getParticipantsRequest().getVerifiers().stream()
+        issueRequest.getParticipants().getVerifiers().stream()
                 .filter(Predicate.not(ParticipantRequest::isDelete))
                 .forEach(verifier -> participationSet.add(buildParticipation(verifier, issue, ParticipationType.VERIFIER, isForUpdate)));
-        issueRequest.getParticipantsRequest().getReviewers().stream()
+        issueRequest.getParticipants().getReviewers().stream()
                 .filter(Predicate.not(ParticipantRequest::isDelete))
                 .forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.REVIEWER, isForUpdate)));
-        issueRequest.getParticipantsRequest().getWatchers().stream()
+        issueRequest.getParticipants().getWatchers().stream()
                 .filter(Predicate.not(ParticipantRequest::isDelete))
                 .forEach(reviewer -> participationSet.add(buildParticipation(reviewer, issue, ParticipationType.WATCHER, isForUpdate)));
         return participationSet;

@@ -2,11 +2,13 @@ package com.its.issuetrackingservice.domain.commands.activity;
 
 import com.its.issuetrackingservice.domain.commands.Command;
 import com.its.issuetrackingservice.domain.service.ActivityService;
+import com.its.issuetrackingservice.domain.service.IssueService;
 import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.request.CommentRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.Activity;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.ActivityMapper;
 import lombok.AllArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -26,6 +28,7 @@ public class CommentOnIssueCommand extends Command<ActivityResponse> {
 
     // Services
     private ActivityService activityService;
+    private IssueService issueService;
     private ActivityMapper activityMapper;
     private UserContext userContext;
 
@@ -40,7 +43,8 @@ public class CommentOnIssueCommand extends Command<ActivityResponse> {
     public ActivityResponse execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.activity = activityMapper.commentRequestToEntity(commentRequest, issueId);
+        Issue issue = issueService.getIssueById(issueId);
+        this.activity = activityMapper.commentRequestToEntity(commentRequest, issue.getId());
         this.activity = activityService.createComment(activity);
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {

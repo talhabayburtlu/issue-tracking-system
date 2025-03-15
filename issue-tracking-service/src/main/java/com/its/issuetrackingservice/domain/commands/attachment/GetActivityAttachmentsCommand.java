@@ -2,10 +2,12 @@ package com.its.issuetrackingservice.domain.commands.attachment;
 
 import com.its.issuetrackingservice.domain.commands.Command;
 import com.its.issuetrackingservice.domain.service.AttachmentService;
+import com.its.issuetrackingservice.domain.service.IssueService;
 import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentResponse;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.ActivityAttachment;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +30,7 @@ public class GetActivityAttachmentsCommand extends Command<List<AttachmentRespon
 
     // Services
     private AttachmentService attachmentService;
+    private IssueService issueService;
     private AttachmentMapper attachmentMapper;
     private UserContext userContext;
 
@@ -42,7 +45,8 @@ public class GetActivityAttachmentsCommand extends Command<List<AttachmentRespon
     public List<AttachmentResponse> execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.attachments = attachmentService.getAttachmentsOfActivity(activityId, issueId);
+        Issue issue = issueService.getIssueById(issueId);
+        this.attachments = attachmentService.getAttachmentsOfActivity(activityId, issue.getId());
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);

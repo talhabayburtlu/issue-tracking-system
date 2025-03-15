@@ -4,6 +4,7 @@ server:
     session:
       cookie:
         same-site: lax
+  forward-headers-strategy: native
 
 logging:
   level:
@@ -34,3 +35,19 @@ eureka:
   instance:
     hostname: gateway-service
     prefer-ip-address: false
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway Service
+      - url: /api/its/v3/api-docs
+        name: Issue Tracking Service
+
+swagger:
+  url: "http://localhost:${server.port}"

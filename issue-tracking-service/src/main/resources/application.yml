@@ -33,3 +33,12 @@ eureka:
   instance:
     hostname: issue-tracking-service
     prefer-ip-address: ${EUREKA_PREFER_IP_ADDRESS:true}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+swagger:
+  url: "http://localhost:8081/api/its"

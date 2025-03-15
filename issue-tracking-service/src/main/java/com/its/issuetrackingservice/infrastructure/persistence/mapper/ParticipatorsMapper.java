@@ -38,9 +38,6 @@ public abstract class ParticipatorsMapper {
         return participantsDetailResponse;
     }
 
-    // TODO: Create mappings for ParticipatorsDetailResponse and ParticipatorsSummaryResponse
-
-
     public Set<ParticipantDetailResponse> extractParticipators(Set<Participation> participants, ParticipationType participationType) {
         return participants.stream()
                 .filter(participation -> participation.getParticipationType().equals(participationType))

@@ -8,6 +8,12 @@ import com.its.issuetrackingservice.domain.commands.activity.UpdateCommentOnIssu
 import com.its.issuetrackingservice.infrastructure.dto.GenericRestResponse;
 import com.its.issuetrackingservice.infrastructure.dto.request.CommentRequest;
 import com.its.issuetrackingservice.infrastructure.dto.response.ActivityResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,7 +31,13 @@ public class ActivityController {
     private final Invoker invoker;
 
     @GetMapping("/issue/{issue_id}")
-    public GenericRestResponse<List<ActivityResponse>> getIssueActivities(@PathVariable("issue_id") Long issueId,
+    @Operation(summary = "Get list of issue activities")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of issue activities returned", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = List.class)) }),
+            @ApiResponse(responseCode = "403", description = "No access to project of the issue", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Issue does not exist", content = @Content)
+    })
+    public GenericRestResponse<List<ActivityResponse>> getIssueActivities(@Parameter(name = "issue_id" , description = "The id of the issue of the activities", required = true) @PathVariable("issue_id") Long issueId,
                                                                           Pageable pageable) {
         GetIssueActivitiesCommand command = GetIssueActivitiesCommand.builder()
                 .issueId(issueId)
@@ -36,8 +48,14 @@ public class ActivityController {
     }
 
     @PostMapping("/issue/{issue_id}")
-    public GenericRestResponse<ActivityResponse> commentOnIssue(@RequestBody CommentRequest commentRequest,
-                                                                @PathVariable("issue_id") Long issueId) {
+    @Operation(summary = "Comment on an issue")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment created successfully on issue", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityResponse.class)) }),
+            @ApiResponse(responseCode = "403", description = "No access to project of the issue", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Issue does not exist", content = @Content)
+    })
+    public GenericRestResponse<ActivityResponse> commentOnIssue(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Comment request that includes created comment", required = true) @RequestBody CommentRequest commentRequest,
+                                                                @Parameter(name = "issue_id" , description = "The id of the issue of the activities", required = true) @PathVariable("issue_id") Long issueId) {
         CommentOnIssueCommand command = CommentOnIssueCommand.builder()
                 .commentRequest(commentRequest)
                 .issueId(issueId)
@@ -46,9 +64,15 @@ public class ActivityController {
     }
 
     @PatchMapping("{activity_id}/issue/{issue_id}")
-    public GenericRestResponse<ActivityResponse> updateCommentOnIssue(@RequestBody CommentRequest commentRequest,
-                                                                     @PathVariable("activity_id") Long activityId,
-                                                                     @PathVariable("issue_id") Long issueId) {
+    @Operation(summary = "Update the existing comment on an issue")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment updated successfully on issue", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = ActivityResponse.class)) }),
+            @ApiResponse(responseCode = "403", description = "No access to project of the issue", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Issue does not exist", content = @Content)
+    })
+    public GenericRestResponse<ActivityResponse> updateCommentOnIssue(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Comment request that includes updated comment", required = true) @RequestBody CommentRequest commentRequest,
+                                                                      @Parameter(name = "activity_id" , description = "The id of the comment activity which to be updated", required = true) @PathVariable("activity_id") Long activityId,
+                                                                     @Parameter(name = "issue_id" , description = "The id of the issue of the activities", required = true) @PathVariable("issue_id") Long issueId) {
         UpdateCommentOnIssueCommand command = UpdateCommentOnIssueCommand.builder()
                 .commentRequest(commentRequest)
                 .activityId(activityId)

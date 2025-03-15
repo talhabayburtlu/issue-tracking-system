@@ -2,9 +2,11 @@ package com.its.issuetrackingservice.domain.commands.attachment;
 
 import com.its.issuetrackingservice.domain.commands.Command;
 import com.its.issuetrackingservice.domain.service.AttachmentService;
+import com.its.issuetrackingservice.domain.service.IssueService;
 import com.its.issuetrackingservice.domain.util.SpringContext;
 import com.its.issuetrackingservice.infrastructure.dto.UserContext;
 import com.its.issuetrackingservice.infrastructure.dto.response.AttachmentResponse;
+import com.its.issuetrackingservice.infrastructure.persistence.entity.Issue;
 import com.its.issuetrackingservice.infrastructure.persistence.entity.IssueAttachment;
 import com.its.issuetrackingservice.infrastructure.persistence.mapper.AttachmentMapper;
 import lombok.AllArgsConstructor;
@@ -26,12 +28,14 @@ public class GetIssueAttachmentsCommand extends Command<List<AttachmentResponse>
 
     // Services
     private AttachmentService attachmentService;
+    private IssueService issueService;
     private AttachmentMapper attachmentMapper;
     private UserContext userContext;
 
     @Override
     public void init() {
         this.attachmentService = SpringContext.getBean(AttachmentService.class);
+        this.issueService = SpringContext.getBean(IssueService.class);
         this.attachmentMapper = SpringContext.getBean(AttachmentMapper.class);
         this.userContext = SpringContext.getBean(UserContext.class);
     }
@@ -40,7 +44,8 @@ public class GetIssueAttachmentsCommand extends Command<List<AttachmentResponse>
     public List<AttachmentResponse> execute() {
         userContext.applyAccessToProjectByIssueId(issueId);
 
-        this.attachments = attachmentService.getAttachmentsOfIssue(issueId);
+        Issue issue = issueService.getIssueById(issueId);
+        this.attachments = attachmentService.getAttachmentsOfIssue(issue.getId());
 
         if (Boolean.TRUE.equals(getReturnResultAfterExecution())) {
             return getResult().orElse(null);

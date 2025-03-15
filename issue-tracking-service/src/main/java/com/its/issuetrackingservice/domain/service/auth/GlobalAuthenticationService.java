@@ -8,6 +8,7 @@ import com.its.issuetrackingservice.infrastructure.persistence.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -18,8 +19,11 @@ public class GlobalAuthenticationService {
     private final MembershipService membershipService;
 
     public UserContext generateUserContext(String keycloakId) {
-        User user = userService.getUserByKeycloakId(keycloakId, true);
-        Set<Project> projects = membershipService.getProjectsOfMember(user.getId());
+        Set<Project> projects = new HashSet<>();
+        User user = userService.getUserByKeycloakId(keycloakId, false);
+        if (user != null) {
+            projects = membershipService.getProjectsOfMember(user.getId());
+        }
 
         UserContext userContext = UserContext.builder()
                 .user(user)
