@@ -3,9 +3,9 @@ ITS (Issue Tracking System)
 **A platform designed for agile organizations to track their progress built with centralized cloud microservice architecture.**  
 
 The architecture includes a discovery service where other microservices can register themselves and communicate through registry. A gateway is placed to distribute incoming requests to proper microservices. 
-With the help of keycloak integration, ITS users and projects are managed through keycloak panel. Finally, the management of issue tracking mechanisms are implemented in issue tracking service.  
+With the help of keycloak integration, ITS users and projects are managed through keycloak panel. The management of issue tracking mechanisms are implemented in issue tracking service.  
 
-ITS has the capability of the applied best practices like:
+ITS applied these practices in software development:
 * Microservice architecture with cloud gateway
 * Command based design for business logic implementation
 * Messaging systems like Kafka used between services for asynchronous operations
@@ -18,7 +18,7 @@ ITS has the capability of the applied best practices like:
 
 # Architecture
 
-![ITS_ENTITY_RELATIONS-Architecture drawio](https://github.com/user-attachments/assets/7f260d84-b928-44e1-aad7-782fcf13888a)
+![Architecture](https://github.com/user-attachments/assets/d992b6dc-466c-469e-8200-9e4a31d5df2d)
 
 
 ## Initial Setup
@@ -60,22 +60,22 @@ Also, `its-auth` realm for keycloak is auto imported when docker container is de
 
 
 ## :door: Gateway Service
-Responsible for redirecting client requests to relative microservices and returns the response.
-
+Responsible for redirecting client requests to relative microservices and returns the response. Applies authentication by communicating with keycloak. Restricts 
+direct access to other microservices.
   
 ## :bookmark: Discovery Service
-Responsible for holding a registry for other microservices to register themselves to communicate. Each microservice obtain unique identifier for introducing themselves to other microservices.
-Discovery service handles this registration operation.
+Responsible for holding a registry for other microservices to register themselves to communicate. Each microservice obtain unique identifier for introducing themselves to gateway and other microservices.
+Discovery service handles the registration operation.
 
   
 ## :outbox_tray: Keycloak Integration Service
-Responsible for management and synchronization of users, projects and user roles that are used in Issue Tracking Service via Kafka. 
+Responsible for management and synchronization of users, projects and user roles that are used in Issue Tracking Service via Kafka connection. 
 * When a user or group is created or deleted in Keycloak, it's information is sent to ITS for handling the creation of the user and project.
 * When a user is linked to group, it's information is sent to ITS for linking user and project by generating a membership.
 * When a predefined role is selected to be created or deleted for a user linked to a group, it's information sent to ITS for generating relative role to be create for that membership
 
   
-## :calendar: Issue Tracking Service
+## :calendar: <a name="issue-tracking-service"> Issue Tracking Service
 Responsible for agile organizations to track their progress by generating issues of the projects they are in.
 * Users that participates into a project can manage issues. They can do that if they are a membership of that project.
 * A project can have categories, states and sprints that issues can be configured with.
@@ -89,6 +89,9 @@ Responsible for agile organizations to track their progress by generating issues
 Responsible for sending  mail to the selected batch of recipients. Notification requests are accepted via kafka connection and can send 
 multiple mail templates to multiple users. Any individual request saved in database with successful state or failed state with related exception messages.
 
+
+[Issue Tracking Service](##issue-tracking-service) uses this service to notify active watchers of the issues for any updates that occurred with the content of the activity.
+
   
 ## :pencil2: Logging Service [Scheduled for 2nd Iteration of Project] :construction:
 Will be responsible for centralized logging mechanism for other microservices to log their statements.  
@@ -97,13 +100,14 @@ Will be responsible for centralized logging mechanism for other microservices to
 ## :ticket: Ticket Tracking Service [Scheduled for 3rd Iteration of Project] :construction:
 Will be responsible for handling resolution process of customer tickets and creating related issues in issue tracking system.  
 
-
+# API Swagger Documentation (Use Cases)
+You can review API documentation in more detail at `http://localhost:8081/swagger-ui.html`.
+![api_swagger_documentation](https://github.com/user-attachments/assets/e0a4e7be-314a-4f72-80e2-c6e3a442cf92)
   
-# Entity & Relation Structure
-![ITS_ENTITY_RELATIONS-ENTITY_RELATIONS drawio (2)](https://github.com/user-attachments/assets/5388d694-d000-48de-9ef8-3709e8d70c6e)
+# ERM Diagram
+![erm_diagram](https://github.com/user-attachments/assets/3d5f615a-d32f-48bf-8332-da4c610b243a)
 
-# Commands (Use Cases)
-![ITS_ENTITY_RELATIONS-COMMANDS drawio](https://github.com/user-attachments/assets/e98abc2d-c89f-4f97-ba90-c95c8d46bd4a)
+
 
 
 
